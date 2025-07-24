@@ -79,29 +79,35 @@ const BookmarkModal: React.FC = () => {
   };
 
   const loadCurrentPageInfo = async () => {
+    console.log('开始获取当前页面信息...');
     setIsLoadingPageInfo(true);
     
     try {
-      // 尝试从当前标签页获取信息
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (tab) {
-        if (tab.title) setTitle(tab.title);
-        if (tab.url) setUrl(tab.url);
+      // 通过background script获取当前活动标签页信息
+      console.log('发送消息到background script...');
+      const response = await chrome.runtime.sendMessage({ action: 'getCurrentPageInfo' });
+      console.log('收到background script响应:', response);
+      
+      if (response && response.success) {
+        console.log('成功获取页面信息:', { title: response.title, url: response.url });
+        if (response.title) {
+          setTitle(response.title);
+          console.log('设置标题:', response.title);
+        }
+        if (response.url) {
+          setUrl(response.url);
+          console.log('设置URL:', response.url);
+        }
+      } else {
+        console.error('获取页面信息失败:', response?.error || '未知错误');
+        alert('获取页面信息失败: ' + (response?.error || '未知错误'));
       }
     } catch (error) {
-      console.error('获取页面信息失败:', error);
-      // 如果Chrome API不可用，尝试其他方式
-      try {
-        const response = await chrome.runtime.sendMessage({ action: 'getPageInfo' });
-        if (response) {
-          if (response.title) setTitle(response.title);
-          if (response.url) setUrl(response.url);
-        }
-      } catch (err) {
-        console.error('获取页面信息失败:', err);
-      }
+      console.error('获取页面信息异常:', error);
+      alert('获取页面信息异常: ' + error.message);
     } finally {
       setIsLoadingPageInfo(false);
+      console.log('获取页面信息流程结束');
     }
   };
 
