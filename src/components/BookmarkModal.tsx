@@ -36,8 +36,12 @@ const BookmarkModal: React.FC = () => {
       setUrl('');
       setDescription('');
       setGroupId(selectedGroup || (groups[0]?.id || ''));
+      // 新增模式时自动加载当前页面信息
+      if (showBookmarkModal) {
+        loadCurrentPageInfo();
+      }
     }
-  }, [editingBookmark, selectedGroup]); // 移除groups依赖，避免无限重渲染
+  }, [editingBookmark, selectedGroup, showBookmarkModal]); // 移除groups依赖，避免无限重渲染
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -142,21 +146,10 @@ const BookmarkModal: React.FC = () => {
         </div>
         
         <form onSubmit={handleSubmit} className="p-6">
-          {!isEditing && (
-            <div className="mb-4">
-              <button
-                type="button"
-                onClick={loadCurrentPageInfo}
-                disabled={isLoadingPageInfo}
-                className="flex items-center gap-2 px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
-              >
-                {isLoadingPageInfo ? (
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Globe className="w-4 h-4" />
-                )}
-                {isLoadingPageInfo ? '获取中...' : '获取当前页面信息'}
-              </button>
+          {!isEditing && isLoadingPageInfo && (
+            <div className="mb-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <RefreshCw className="w-4 h-4 animate-spin" />
+              正在获取当前页面信息...
             </div>
           )}
           

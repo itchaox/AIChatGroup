@@ -18,7 +18,8 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
     setShowBookmarkModal,
     setEditingGroup,
     deleteGroup,
-    getGroupBookmarks
+    getGroupBookmarks,
+    quickAddBookmark
   } = useAppStore();
   
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
@@ -47,7 +48,17 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
     setShowDropdown(null);
   };
 
-  const handleAddBookmark = (groupId: string) => {
+  const handleAddBookmark = async (groupId: string) => {
+    setShowDropdown(null);
+    const success = await quickAddBookmark(groupId);
+    if (!success) {
+      // 如果快速添加失败，回退到手动模式
+      setSelectedGroup(groupId);
+      setShowBookmarkModal(true);
+    }
+  };
+
+  const handleManualAddBookmark = (groupId: string) => {
     setSelectedGroup(groupId);
     setShowBookmarkModal(true);
     setShowDropdown(null);
@@ -113,13 +124,20 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
                 </button>
                 
                 {showDropdown === group.id && (
-                  <div className="absolute right-0 top-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10 min-w-[120px]">
+                  <div className="absolute right-0 top-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10 min-w-[140px]">
                     <button
                       onClick={() => handleAddBookmark(group.id)}
                       className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                     >
                       <Plus className="w-4 h-4" />
-                      添加收藏
+                      快速收藏
+                    </button>
+                    <button
+                      onClick={() => handleManualAddBookmark(group.id)}
+                      className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <Edit className="w-4 h-4" />
+                      手动添加
                     </button>
                     <button
                       onClick={() => handleEditGroup(group)}
@@ -145,12 +163,21 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
                 {bookmarks.length === 0 ? (
                   <div className="p-4 text-center text-gray-500 dark:text-gray-400">
                     <p className="mb-2">这个分组还没有收藏</p>
-                    <button
-                      onClick={() => handleAddBookmark(group.id)}
-                      className="text-blue-600 dark:text-blue-400 hover:underline"
-                    >
-                      添加第一个收藏
-                    </button>
+                    <div className="flex gap-2 justify-center">
+                      <button
+                        onClick={() => handleAddBookmark(group.id)}
+                        className="text-blue-600 dark:text-blue-400 hover:underline"
+                      >
+                        快速收藏
+                      </button>
+                      <span className="text-gray-300 dark:text-gray-600">|</span>
+                      <button
+                        onClick={() => handleManualAddBookmark(group.id)}
+                        className="text-blue-600 dark:text-blue-400 hover:underline"
+                      >
+                        手动添加
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <div className="divide-y divide-gray-200 dark:divide-gray-700">

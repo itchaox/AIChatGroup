@@ -46,6 +46,7 @@ interface AppStore {
   createBookmark: (title: string, url: string, groupId: string, favicon?: string, description?: string) => void;
   updateBookmark: (bookmarkId: string, updates: Partial<Bookmark>) => void;
   deleteBookmark: (bookmarkId: string) => void;
+  quickAddBookmark: (groupId: string) => Promise<boolean>;
   
   // 计算属性
   getCurrentGroups: () => Group[];
@@ -95,6 +96,35 @@ export const useAppStore = create<AppStore>((set, get) => ({
     set({ showBookmarkModal: show });
     if (!show) {
       set({ editingBookmark: null });
+    }
+  },
+
+  // 快速添加当前页面收藏
+  quickAddBookmark: async (groupId: string) => {
+    try {
+      // 获取当前页面信息
+      const response = await chrome.runtime.sendMessage({ action: 'getCurrentPageInfo' });
+      
+      if (response && response.success && response.title && response.url) {
+        const { currentAITool } = get();
+        const newBookmark = createBookmarkStorage(
+          response.title,
+          response.url,
+          groupId,
+          currentAITool,
+          undefined, // favicon will be auto-detected
+          undefined // no description
+        );
+        const bookmarks = getBookmarks();
+        set({ bookmarks });
+        return true;
+      } else {
+        console.error('获取页面信息失败:', response?.error || '未知错误');
+        return false;
+      }
+    } catch (error) {
+      console.error('快速添加收藏失败:', error);
+      return false;
     }
   },
 
