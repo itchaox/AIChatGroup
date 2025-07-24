@@ -58,11 +58,7 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
     }
   };
 
-  const handleManualAddBookmark = (groupId: string) => {
-    setSelectedGroup(groupId);
-    setShowBookmarkModal(true);
-    setShowDropdown(null);
-  };
+
 
   if (groups.length === 0) {
     return (
@@ -132,13 +128,7 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
                       <Plus className="w-4 h-4" />
                       快速收藏
                     </button>
-                    <button
-                      onClick={() => handleManualAddBookmark(group.id)}
-                      className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                    >
-                      <Edit className="w-4 h-4" />
-                      手动添加
-                    </button>
+
                     <button
                       onClick={() => handleEditGroup(group)}
                       className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
@@ -169,13 +159,6 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
                         className="text-blue-600 dark:text-blue-400 hover:underline"
                       >
                         快速收藏
-                      </button>
-                      <span className="text-gray-300 dark:text-gray-600">|</span>
-                      <button
-                        onClick={() => handleManualAddBookmark(group.id)}
-                        className="text-blue-600 dark:text-blue-400 hover:underline"
-                      >
-                        手动添加
                       </button>
                     </div>
                   </div>
