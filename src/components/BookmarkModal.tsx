@@ -37,7 +37,7 @@ const BookmarkModal: React.FC = () => {
       setDescription('');
       setGroupId(selectedGroup || (groups[0]?.id || ''));
     }
-  }, [editingBookmark, selectedGroup, groups]);
+  }, [editingBookmark, selectedGroup]); // 移除groups依赖，避免无限重渲染
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
