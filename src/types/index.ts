@@ -33,14 +33,15 @@ export interface Bookmark {
 
 export interface AppState {
   currentAITool: string;
+  aiTools: AITool[];
   groups: Group[];
   bookmarks: Bookmark[];
   searchQuery: string;
   isLoading: boolean;
 }
 
-// 预定义的AI工具
-export const AI_TOOLS: AITool[] = [
+// 默认的AI工具
+export const DEFAULT_AI_TOOLS: AITool[] = [
   {
     id: 'chatgpt',
     name: 'ChatGPT',
@@ -75,13 +76,20 @@ export const AI_TOOLS: AITool[] = [
     icon: '🎪',
     color: '#FF4081',
     url: 'https://character.ai'
-  },
-  {
-    id: 'other',
-    name: '其他',
-    icon: '📝',
-    color: '#6B7280'
   }
+];
+
+// 预设的AI工具图标
+export const AI_TOOL_ICONS = [
+  '🤖', '🧠', '💎', '🎭', '🎪', '🚀', '⚡', '🔥',
+  '💡', '🌟', '🎯', '🎨', '🔧', '📱', '💻', '🖥️'
+];
+
+// 预设的AI工具颜色
+export const AI_TOOL_COLORS = [
+  '#10A37F', '#FF6B35', '#4285F4', '#8B5CF6', '#FF4081',
+  '#F59E0B', '#EF4444', '#10B981', '#3B82F6', '#8B5CF6',
+  '#F97316', '#06B6D4', '#84CC16', '#EC4899', '#6366F1'
 ];
 
 // 默认分组图标

@@ -1,7 +1,8 @@
 // 存储管理工具
-import { Group, Bookmark, AI_TOOLS } from '../types';
+import { Group, Bookmark, AITool, DEFAULT_AI_TOOLS } from '../types';
 
 const STORAGE_KEYS = {
+  AI_TOOLS: 'ai_tools',
   GROUPS: 'ai_tool_groups',
   BOOKMARKS: 'ai_tool_bookmarks',
   CURRENT_TOOL: 'current_ai_tool',
@@ -48,13 +49,38 @@ export const saveBookmarks = (bookmarks: Bookmark[]): void => {
   }
 };
 
+// 获取所有AI工具
+export const getAITools = (): AITool[] => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEYS.AI_TOOLS);
+    return stored ? JSON.parse(stored) : DEFAULT_AI_TOOLS;
+  } catch (error) {
+    console.error('获取AI工具数据失败:', error);
+    return DEFAULT_AI_TOOLS;
+  }
+};
+
+// 保存AI工具
+export const saveAITools = (aiTools: AITool[]): void => {
+  try {
+    localStorage.setItem(STORAGE_KEYS.AI_TOOLS, JSON.stringify(aiTools));
+  } catch (error) {
+    console.error('保存AI工具数据失败:', error);
+  }
+};
+
 // 获取当前选中的AI工具
 export const getCurrentAITool = (): string => {
   try {
-    return localStorage.getItem(STORAGE_KEYS.CURRENT_TOOL) || AI_TOOLS[0].id;
+    const stored = localStorage.getItem(STORAGE_KEYS.CURRENT_TOOL);
+    if (stored) {
+      return stored;
+    }
+    const aiTools = getAITools();
+    return aiTools.length > 0 ? aiTools[0].id : DEFAULT_AI_TOOLS[0].id;
   } catch (error) {
     console.error('获取当前AI工具失败:', error);
-    return AI_TOOLS[0].id;
+    return DEFAULT_AI_TOOLS[0].id;
   }
 };
 
@@ -169,3 +195,66 @@ export const getBookmarksByGroup = (groupId: string): Bookmark[] => {
   const bookmarks = getBookmarks();
   return bookmarks.filter(bookmark => bookmark.groupId === groupId).sort((a, b) => a.order - b.order);
 };
+
+// 创建新AI工具
+export const createAITool = (name: string, icon: string, color: string, url?: string): AITool => {
+  const aiTools = getAITools();
+  
+  const newAITool: AITool = {
+    id: generateId(),
+    name,
+    icon,
+    color,
+    url
+  };
+  
+  const updatedAITools = [...aiTools, newAITool];
+  saveAITools(updatedAITools);
+  return newAITool;
+};
+
+// 更新AI工具
+export const updateAITool = (toolId: string, updates: Partial<AITool>): void => {
+  const aiTools = getAITools();
+  const updatedAITools = aiTools.map(tool => 
+    tool.id === toolId 
+      ? { ...tool, ...updates }
+      : tool
+  );
+  saveAITools(updatedAITools);
+};
+
+// 删除AI工具
+export const deleteAITool = (toolId: string): void => {
+  const aiTools = getAITools();
+  const groups = getGroups();
+  const bookmarks = getBookmarks();
+  
+  // 删除该AI工具下的所有分组和收藏
+  const updatedGroups = groups.filter(group => group.aiToolId !== toolId);
+  const updatedBookmarks = bookmarks.filter(bookmark => bookmark.aiToolId !== toolId);
+  
+  saveGroups(updatedGroups);
+  saveBookmarks(updatedBookmarks);
+  
+  // 删除AI工具
+  const updatedAITools = aiTools.filter(tool => tool.id !== toolId);
+  saveAITools(updatedAITools);
+  
+  // 如果删除的是当前选中的工具，切换到第一个工具
+  const currentTool = getCurrentAITool();
+  if (currentTool === toolId && updatedAITools.length > 0) {
+    saveCurrentAITool(updatedAITools[0].id);
+  }
+};
+
+// 导出函数别名以保持向后兼容
+export const createGroupStorage = createGroup;
+export const updateGroupStorage = updateGroup;
+export const deleteGroupStorage = deleteGroup;
+export const createBookmarkStorage = createBookmark;
+export const updateBookmarkStorage = updateBookmark;
+export const deleteBookmarkStorage = deleteBookmark;
+export const createAIToolStorage = createAITool;
+export const updateAIToolStorage = updateAITool;
+export const deleteAIToolStorage = deleteAITool;

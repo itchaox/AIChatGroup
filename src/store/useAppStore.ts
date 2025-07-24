@@ -1,17 +1,21 @@
 // Zustand状态管理
 import { create } from 'zustand';
-import { Group, Bookmark, AI_TOOLS } from '../types';
+import { Group, Bookmark, AITool } from '../types';
 import {
+  getAITools,
   getGroups,
   getBookmarks,
   getCurrentAITool,
   saveCurrentAITool,
-  createGroup as createGroupStorage,
-  updateGroup as updateGroupStorage,
-  deleteGroup as deleteGroupStorage,
-  createBookmark as createBookmarkStorage,
-  updateBookmark as updateBookmarkStorage,
-  deleteBookmark as deleteBookmarkStorage,
+  createGroupStorage,
+  updateGroupStorage,
+  deleteGroupStorage,
+  createBookmarkStorage,
+  updateBookmarkStorage,
+  deleteBookmarkStorage,
+  createAIToolStorage,
+  updateAIToolStorage,
+  deleteAIToolStorage,
   getGroupsByAITool,
   getBookmarksByGroup
 } from '../utils/storage';
@@ -19,6 +23,7 @@ import {
 interface AppStore {
   // 状态
   currentAITool: string;
+  aiTools: AITool[];
   groups: Group[];
   bookmarks: Bookmark[];
   searchQuery: string;
@@ -26,8 +31,10 @@ interface AppStore {
   selectedGroup: string | null;
   showGroupModal: boolean;
   showBookmarkModal: boolean;
+  showAIToolModal: boolean;
   editingGroup: Group | null;
   editingBookmark: Bookmark | null;
+  editingAITool: AITool | null;
 
   // 动作
   setCurrentAITool: (toolId: string) => void;
@@ -35,8 +42,10 @@ interface AppStore {
   setSelectedGroup: (groupId: string | null) => void;
   setShowGroupModal: (show: boolean) => void;
   setShowBookmarkModal: (show: boolean) => void;
+  setShowAIToolModal: (show: boolean) => void;
   setEditingGroup: (group: Group | null) => void;
   setEditingBookmark: (bookmark: Bookmark | null) => void;
+  setEditingAITool: (aiTool: AITool | null) => void;
   
   // 数据操作
   loadData: () => void;
@@ -47,8 +56,12 @@ interface AppStore {
   updateBookmark: (bookmarkId: string, updates: Partial<Bookmark>) => void;
   deleteBookmark: (bookmarkId: string) => void;
   quickAddBookmark: (groupId: string) => Promise<boolean>;
+  createAITool: (name: string, icon: string, color: string, url?: string) => void;
+  updateAITool: (toolId: string, updates: Partial<AITool>) => void;
+  deleteAITool: (toolId: string) => void;
   
   // 计算属性
+  getCurrentAITool: () => AITool | undefined;
   getCurrentGroups: () => Group[];
   getGroupBookmarks: (groupId: string) => Bookmark[];
   getFilteredGroups: () => Group[];
@@ -57,6 +70,7 @@ interface AppStore {
 export const useAppStore = create<AppStore>((set, get) => ({
   // 初始状态
   currentAITool: getCurrentAITool(),
+  aiTools: [],
   groups: [],
   bookmarks: [],
   searchQuery: '',
@@ -64,8 +78,10 @@ export const useAppStore = create<AppStore>((set, get) => ({
   selectedGroup: null,
   showGroupModal: false,
   showBookmarkModal: false,
+  showAIToolModal: false,
   editingGroup: null,
   editingBookmark: null,
+  editingAITool: null,
 
   // 设置当前AI工具
   setCurrentAITool: (toolId: string) => {
@@ -96,6 +112,14 @@ export const useAppStore = create<AppStore>((set, get) => ({
     set({ showBookmarkModal: show });
     if (!show) {
       set({ editingBookmark: null });
+    }
+  },
+
+  // 设置AI工具模态框显示状态
+  setShowAIToolModal: (show: boolean) => {
+    set({ showAIToolModal: show });
+    if (!show) {
+      set({ editingAITool: null });
     }
   },
 
@@ -138,13 +162,19 @@ export const useAppStore = create<AppStore>((set, get) => ({
     set({ editingBookmark: bookmark });
   },
 
+  // 设置编辑中的AI工具
+  setEditingAITool: (aiTool: AITool | null) => {
+    set({ editingAITool: aiTool });
+  },
+
   // 加载数据
   loadData: () => {
     set({ isLoading: true });
     try {
+      const aiTools = getAITools();
       const groups = getGroups();
       const bookmarks = getBookmarks();
-      set({ groups, bookmarks, isLoading: false });
+      set({ aiTools, groups, bookmarks, isLoading: false });
     } catch (error) {
       console.error('加载数据失败:', error);
       set({ isLoading: false });
@@ -194,6 +224,35 @@ export const useAppStore = create<AppStore>((set, get) => ({
     deleteBookmarkStorage(bookmarkId);
     const bookmarks = getBookmarks();
     set({ bookmarks });
+  },
+
+  // 创建AI工具
+  createAITool: (name: string, icon: string, color: string, url?: string) => {
+    const newAITool = createAIToolStorage(name, icon, color, url);
+    const aiTools = getAITools();
+    set({ aiTools });
+  },
+
+  // 更新AI工具
+  updateAITool: (toolId: string, updates: Partial<AITool>) => {
+    updateAIToolStorage(toolId, updates);
+    const aiTools = getAITools();
+    set({ aiTools });
+  },
+
+  // 删除AI工具
+  deleteAITool: (toolId: string) => {
+    deleteAIToolStorage(toolId);
+    const aiTools = getAITools();
+    const groups = getGroups();
+    const bookmarks = getBookmarks();
+    set({ aiTools, groups, bookmarks, selectedGroup: null });
+  },
+
+  // 获取当前AI工具对象
+  getCurrentAITool: () => {
+    const { currentAITool, aiTools } = get();
+    return aiTools.find(tool => tool.id === currentAITool);
   },
 
   // 获取当前AI工具的分组
