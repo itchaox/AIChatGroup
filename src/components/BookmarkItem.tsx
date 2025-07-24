@@ -19,15 +19,33 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     
     if (e.ctrlKey || e.metaKey) {
       // Ctrl/Cmd + 点击，新标签页打开
-      window.open(bookmark.url, '_blank');
+      try {
+        await chrome.tabs.create({ url: bookmark.url });
+      } catch (error) {
+        console.error('Failed to open in new tab:', error);
+        // 降级到window.open
+        window.open(bookmark.url, '_blank');
+      }
     } else {
-      // 普通点击，当前页面打开
-      window.location.href = bookmark.url;
+      // 普通点击，当前标签页打开
+      try {
+        const [currentTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (currentTab?.id) {
+          await chrome.tabs.update(currentTab.id, { url: bookmark.url });
+        } else {
+          // 降级到window.location
+          window.location.href = bookmark.url;
+        }
+      } catch (error) {
+        console.error('Failed to update current tab:', error);
+        // 降级到window.location
+        window.location.href = bookmark.url;
+      }
     }
   };
 
