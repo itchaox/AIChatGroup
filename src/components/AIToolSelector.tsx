@@ -13,7 +13,8 @@ const AIToolSelector: React.FC = () => {
     setShowAIToolModal,
     setEditingAITool,
     setShowAIToolAddForm,
-    pinAITool
+    pinAITool,
+    unpinAITool
   } = useAppStore();
   
   const [isOpen, setIsOpen] = useState(false);
@@ -73,6 +74,12 @@ const AIToolSelector: React.FC = () => {
 
   const handlePinTool = (toolId: string) => {
     pinAITool(toolId);
+    setActiveDropdown(null);
+    setIsOpen(false);
+  };
+
+  const handleUnpinTool = (toolId: string) => {
+    unpinAITool(toolId);
     setActiveDropdown(null);
     setIsOpen(false);
   };
@@ -184,7 +191,18 @@ const AIToolSelector: React.FC = () => {
                          {/* 下拉菜单 */}
                          {activeDropdown === tool.id && (
                            <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-[999999] dark:bg-gray-800 dark:border-gray-700 min-w-[120px]">
-                             {!tool.isPinned && (
+                             {tool.isPinned ? (
+                               <button
+                                 onClick={(e) => {
+                                   e.stopPropagation();
+                                   handleUnpinTool(tool.id);
+                                 }}
+                                 className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 transition-colors"
+                               >
+                                 <Pin className="w-3 h-3" />
+                                 <span>取消置顶</span>
+                               </button>
+                             ) : (
                                <button
                                  onClick={(e) => {
                                    e.stopPropagation();

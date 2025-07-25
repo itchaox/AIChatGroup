@@ -62,6 +62,7 @@ interface AppStore {
   updateAITool: (toolId: string, updates: Partial<AITool>) => void;
   deleteAITool: (toolId: string) => void;
   pinAITool: (toolId: string) => void;
+  unpinAITool: (toolId: string) => void;
   
   // 计算属性
   getCurrentAITool: () => AITool | undefined;
@@ -263,6 +264,16 @@ export const useAppStore = create<AppStore>((set, get) => ({
     updateAIToolStorage(toolId, { 
       isPinned: true, 
       pinnedAt: Date.now() 
+    });
+    const aiTools = getAITools();
+    set({ aiTools });
+  },
+
+  // 取消置顶AI工具
+  unpinAITool: (toolId: string) => {
+    updateAIToolStorage(toolId, { 
+      isPinned: false, 
+      pinnedAt: undefined 
     });
     const aiTools = getAITools();
     set({ aiTools });
