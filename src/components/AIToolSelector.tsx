@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MoreVertical, ChevronDown, Plus, Edit, Trash2, Pin } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../lib/utils';
+import { ConfirmDialog } from './ConfirmDialog';
 
 const AIToolSelector: React.FC = () => {
   const { 
@@ -14,12 +15,15 @@ const AIToolSelector: React.FC = () => {
     setEditingAITool,
     setShowAIToolAddForm,
     pinAITool,
-    unpinAITool
+    unpinAITool,
+    deleteAITool
   } = useAppStore();
   
   const [isOpen, setIsOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [dropdownPosition, setDropdownPosition] = useState<{ [key: string]: 'bottom' | 'top' }>({});
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deletingToolId, setDeletingToolId] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const toolRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
@@ -67,11 +71,23 @@ const AIToolSelector: React.FC = () => {
     setIsOpen(false);
   };
 
-  const handleDeleteGroup = (toolId: string) => {
-    // TODO: 实现删除分组功能
-    console.log('删除分组:', toolId);
+  const handleDeleteTool = (toolId: string) => {
+    setDeletingToolId(toolId);
+    setShowDeleteConfirm(true);
     setActiveDropdown(null);
     setIsOpen(false);
+  };
+
+  const confirmDeleteTool = () => {
+    if (deletingToolId) {
+      deleteAITool(deletingToolId);
+      setDeletingToolId(null);
+    }
+  };
+
+  const cancelDeleteTool = () => {
+    setDeletingToolId(null);
+    setShowDeleteConfirm(false);
   };
 
   // 计算下拉菜单位置
@@ -289,7 +305,7 @@ const AIToolSelector: React.FC = () => {
                          <button
                            onClick={(e) => {
                              e.stopPropagation();
-                             handleDeleteGroup(tool.id);
+                             handleDeleteTool(tool.id);
                            }}
                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 transition-colors"
                          >
@@ -306,7 +322,17 @@ const AIToolSelector: React.FC = () => {
         </div>
       </div>
 
-
+      {/* 删除确认弹窗 */}
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        onClose={cancelDeleteTool}
+        onConfirm={confirmDeleteTool}
+        title="删除AI工具"
+        message={`确定要删除这个AI工具吗？删除后该工具下的所有分组和收藏也会被删除，此操作无法撤销。`}
+        confirmText="删除"
+        cancelText="取消"
+        type="danger"
+      />
     </>
   );
 };
