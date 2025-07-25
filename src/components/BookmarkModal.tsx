@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Globe, RefreshCw } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../lib/utils';
+import CustomSelect from './CustomSelect';
 
 const BookmarkModal: React.FC = () => {
   const {
@@ -186,19 +187,16 @@ const BookmarkModal: React.FC = () => {
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               分组
             </label>
-            <select
+            <CustomSelect
               value={groupId}
-              onChange={(e) => setGroupId(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-              required
-            >
-              <option value="">选择分组</option>
-              {groups.map((group) => (
-                <option key={group.id} value={group.id}>
-                  {group.icon} {group.name}
-                </option>
-              ))}
-            </select>
+              onChange={setGroupId}
+              options={groups.map((group) => ({
+                value: group.id,
+                label: group.name,
+                icon: group.icon
+              }))}
+              placeholder="选择分组"
+            />
           </div>
           
           <div className="mb-6">
