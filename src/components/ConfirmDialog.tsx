@@ -72,7 +72,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
         {/* 内容 */}
         <div className="p-6">
-          <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+          <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">
             {message}
           </p>
         </div>
