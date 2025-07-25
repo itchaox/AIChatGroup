@@ -29,6 +29,8 @@ export interface Bookmark {
   createdAt: number;
   updatedAt: number;
   order: number;
+  isPinned?: boolean;
+  pinnedAt?: number;
 }
 
 export interface AppState {

@@ -58,6 +58,8 @@ interface AppStore {
   updateBookmark: (bookmarkId: string, updates: Partial<Bookmark>) => void;
   deleteBookmark: (bookmarkId: string) => void;
   quickAddBookmark: (groupId: string) => Promise<boolean>;
+  pinBookmark: (bookmarkId: string) => void;
+  unpinBookmark: (bookmarkId: string) => void;
   createAITool: (name: string, icon: string) => void;
   updateAITool: (toolId: string, updates: Partial<AITool>) => void;
   deleteAITool: (toolId: string) => void;
@@ -236,6 +238,26 @@ export const useAppStore = create<AppStore>((set, get) => ({
     set({ bookmarks });
   },
 
+  // 置顶收藏
+  pinBookmark: (bookmarkId: string) => {
+    updateBookmarkStorage(bookmarkId, { 
+      isPinned: true, 
+      pinnedAt: Date.now() 
+    });
+    const bookmarks = getBookmarks();
+    set({ bookmarks });
+  },
+
+  // 取消置顶收藏
+  unpinBookmark: (bookmarkId: string) => {
+    updateBookmarkStorage(bookmarkId, { 
+      isPinned: false, 
+      pinnedAt: undefined 
+    });
+    const bookmarks = getBookmarks();
+    set({ bookmarks });
+  },
+
   // 创建AI工具
   createAITool: (name: string, icon: string) => {
     const newAITool = createAIToolStorage(name, icon);
@@ -293,7 +315,16 @@ export const useAppStore = create<AppStore>((set, get) => ({
 
   // 获取分组的收藏
   getGroupBookmarks: (groupId: string) => {
-    return getBookmarksByGroup(groupId);
+    const bookmarks = getBookmarksByGroup(groupId);
+    // 对收藏进行排序：置顶的在前面，按置顶时间倒序排列
+    return [...bookmarks].sort((a, b) => {
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      if (a.isPinned && b.isPinned) {
+        return (b.pinnedAt || 0) - (a.pinnedAt || 0);
+      }
+      return 0;
+    });
   },
 
   // 获取过滤后的分组

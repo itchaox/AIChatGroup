@@ -1,6 +1,6 @@
 // 收藏项组件
 import React, { useState } from 'react';
-import { ExternalLink, MoreVertical, Edit, Trash2, Globe } from 'lucide-react';
+import { ExternalLink, MoreVertical, Edit, Trash2, Globe, Pin } from 'lucide-react';
 import { Bookmark } from '../types';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../lib/utils';
@@ -14,7 +14,9 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
   const {
     setShowBookmarkModal,
     setEditingBookmark,
-    deleteBookmark
+    deleteBookmark,
+    pinBookmark,
+    unpinBookmark
   } = useAppStore();
   
   const [showDropdown, setShowDropdown] = useState(false);
@@ -67,6 +69,16 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
     setShowDeleteConfirm(false);
   };
 
+  const handlePin = () => {
+    pinBookmark(bookmark.id);
+    setShowDropdown(false);
+  };
+
+  const handleUnpin = () => {
+    unpinBookmark(bookmark.id);
+    setShowDropdown(false);
+  };
+
   const getFaviconUrl = () => {
     if (bookmark.favicon && !imageError) {
       return bookmark.favicon;
@@ -115,53 +127,85 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
           )}
         </div>
         
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              window.open(bookmark.url, '_blank');
-            }}
-            className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            title="在新标签页打开"
-          >
-            <ExternalLink className="w-4 h-4 text-gray-400" />
-          </button>
+        <div className="flex items-center gap-1">
+          {/* 置顶图标 - 始终显示如果已置顶 */}
+          {bookmark.isPinned && (
+            <div className="p-1 flex items-center justify-center">
+              <Pin className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+            </div>
+          )}
           
-          <div className="relative">
+          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setShowDropdown(!showDropdown);
+                window.open(bookmark.url, '_blank');
               }}
               className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              title="在新标签页打开"
             >
-              <MoreVertical className="w-4 h-4 text-gray-400" />
+              <ExternalLink className="w-4 h-4 text-gray-400" />
             </button>
             
-            {showDropdown && (
-              <div className="absolute right-0 top-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-20 min-w-[100px]">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleEdit();
-                  }}
-                  className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                >
-                  <Edit className="w-4 h-4" />
-                  编辑
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDelete();
-                  }}
-                  className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  删除
-                </button>
-              </div>
-            )}
+            <div className="relative">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowDropdown(!showDropdown);
+                }}
+                className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              >
+                <MoreVertical className="w-4 h-4 text-gray-400" />
+              </button>
+            
+              {showDropdown && (
+                <div className="absolute right-0 top-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-20 min-w-[120px]">
+                  {bookmark.isPinned ? (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleUnpin();
+                      }}
+                      className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <Pin className="w-4 h-4" />
+                      取消置顶
+                    </button>
+                  ) : (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePin();
+                      }}
+                      className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <Pin className="w-4 h-4" />
+                      置顶
+                    </button>
+                  )}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEdit();
+                    }}
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    <Edit className="w-4 h-4" />
+                    编辑
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete();
+                    }}
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    删除
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
