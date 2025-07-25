@@ -97,7 +97,7 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
   return (
     <div className="group relative">
       <div
-        className="flex items-center p-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+        className="flex items-center py-2 px-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
         onClick={handleClick}
       >
         <div className="flex-shrink-0 w-6 h-6 mr-3 flex items-center justify-center">
@@ -114,7 +114,7 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
         </div>
         
         <div className="flex-1 min-w-0">
-          <div className="font-medium text-base text-gray-900 dark:text-gray-100 truncate">
+          <div className="font-medium text-sm text-gray-900 dark:text-gray-100 truncate">
             {bookmark.title}
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
