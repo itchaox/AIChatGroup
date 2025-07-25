@@ -11,7 +11,8 @@ const AIToolSelector: React.FC = () => {
     setCurrentAITool, 
     showAIToolModal,
     setShowAIToolModal,
-    setEditingAITool 
+    setEditingAITool,
+    setShowAIToolAddForm
   } = useAppStore();
   
   const [isOpen, setIsOpen] = useState(false);
@@ -39,6 +40,7 @@ const AIToolSelector: React.FC = () => {
 
   const handleAddNewTool = () => {
     setEditingAITool(null);
+    setShowAIToolAddForm(true);
     setShowAIToolModal(true);
     setIsOpen(false);
   };

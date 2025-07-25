@@ -63,7 +63,7 @@ export const DEFAULT_AI_TOOLS: AITool[] = [
   {
     id: 'doubao',
     name: '豆包',
-    icon: '🫘'
+    icon: '🚀'
   }
 ];
 

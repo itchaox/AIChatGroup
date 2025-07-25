@@ -7,6 +7,8 @@ export const AIToolModal: React.FC = () => {
   const {
     showAIToolModal,
     setShowAIToolModal,
+    showAIToolAddForm,
+    setShowAIToolAddForm,
     aiTools,
     editingAITool,
     createAITool,
@@ -32,6 +34,10 @@ export const AIToolModal: React.FC = () => {
         });
         setShowForm(true);
         setShowManagement(false);
+      } else if (showAIToolAddForm) {
+        setFormData({ name: '', icon: '🤖' });
+        setShowForm(true);
+        setShowManagement(false);
       } else {
         setShowForm(false);
         setShowManagement(true);
@@ -41,7 +47,7 @@ export const AIToolModal: React.FC = () => {
       setShowForm(false);
       setShowManagement(false);
     }
-  }, [showAIToolModal, editingAITool]);
+  }, [showAIToolModal, editingAITool, showAIToolAddForm]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,12 +67,16 @@ export const AIToolModal: React.FC = () => {
       // 如果是编辑模式，直接关闭整个弹窗
       if (editingAITool) {
         setShowAIToolModal(false);
+      } else if (showAIToolAddForm) {
+        // 如果是从"添加新工具"按钮进入的，直接关闭弹窗
+        setShowAIToolModal(false);
       } else {
-        // 如果是新增模式，回到管理界面
+        // 如果是从管理界面进入的新增模式，回到管理界面
         setShowForm(false);
         setShowManagement(true);
       }
       setEditingAITool(null);
+      setShowAIToolAddForm(false);
       setFormData({ name: '', icon: '🤖' });
     } else {
       setShowAIToolModal(false);

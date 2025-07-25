@@ -32,6 +32,7 @@ interface AppStore {
   showGroupModal: boolean;
   showBookmarkModal: boolean;
   showAIToolModal: boolean;
+  showAIToolAddForm: boolean;
   editingGroup: Group | null;
   editingBookmark: Bookmark | null;
   editingAITool: AITool | null;
@@ -43,6 +44,7 @@ interface AppStore {
   setShowGroupModal: (show: boolean) => void;
   setShowBookmarkModal: (show: boolean) => void;
   setShowAIToolModal: (show: boolean) => void;
+  setShowAIToolAddForm: (show: boolean) => void;
   setEditingGroup: (group: Group | null) => void;
   setEditingBookmark: (bookmark: Bookmark | null) => void;
   setEditingAITool: (aiTool: AITool | null) => void;
@@ -79,6 +81,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   showGroupModal: false,
   showBookmarkModal: false,
   showAIToolModal: false,
+  showAIToolAddForm: false,
   editingGroup: null,
   editingBookmark: null,
   editingAITool: null,
@@ -119,8 +122,13 @@ export const useAppStore = create<AppStore>((set, get) => ({
   setShowAIToolModal: (show: boolean) => {
     set({ showAIToolModal: show });
     if (!show) {
-      set({ editingAITool: null });
+      set({ editingAITool: null, showAIToolAddForm: false });
     }
+  },
+
+  // 设置AI工具添加表单显示状态
+  setShowAIToolAddForm: (show: boolean) => {
+    set({ showAIToolAddForm: show });
   },
 
   // 快速添加当前页面收藏

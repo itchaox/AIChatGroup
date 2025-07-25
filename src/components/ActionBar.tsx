@@ -45,18 +45,6 @@ const ActionBar: React.FC = () => {
             </div>
             
             <div className="space-y-2">
-              <button
-                onClick={() => {
-                  if (confirm('确定要清空所有数据吗？此操作不可恢复。')) {
-                    localStorage.clear();
-                    window.location.reload();
-                  }
-                }}
-                className="w-full text-left px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-              >
-                清空所有数据
-              </button>
-              
               <div className="text-xs text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-200 dark:border-gray-700">
                 AI工具分组管理器 v1.0.0
               </div>
