@@ -283,7 +283,17 @@ export const useAppStore = create<AppStore>((set, get) => ({
 
   // 移动收藏到其他分组
   moveBookmarkToGroup: (bookmarkId: string, targetGroupId: string) => {
-    updateBookmarkStorage(bookmarkId, { groupId: targetGroupId });
+    // 获取目标分组的所有收藏，找到最小的order值
+    const targetGroupBookmarks = getBookmarksByGroup(targetGroupId);
+    const minOrder = targetGroupBookmarks.length > 0 
+      ? Math.min(...targetGroupBookmarks.map(b => b.order))
+      : 1;
+    
+    // 将拖拽的收藏设置为最小order值减1，使其排在第一位
+    updateBookmarkStorage(bookmarkId, { 
+      groupId: targetGroupId,
+      order: minOrder - 1
+    });
     const bookmarks = getBookmarks();
     set({ bookmarks });
   },
@@ -355,14 +365,15 @@ export const useAppStore = create<AppStore>((set, get) => ({
   // 获取分组的收藏
   getGroupBookmarks: (groupId: string) => {
     const bookmarks = getBookmarksByGroup(groupId);
-    // 对收藏进行排序：置顶的在前面，按置顶时间倒序排列
+    // 对收藏进行排序：置顶的在前面，按置顶时间倒序排列，非置顶的按order排序
     return [...bookmarks].sort((a, b) => {
       if (a.isPinned && !b.isPinned) return -1;
       if (!a.isPinned && b.isPinned) return 1;
       if (a.isPinned && b.isPinned) {
         return (b.pinnedAt || 0) - (a.pinnedAt || 0);
       }
-      return 0;
+      // 非置顶收藏按order排序
+      return a.order - b.order;
     });
   },
 
