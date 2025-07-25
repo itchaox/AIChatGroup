@@ -82,6 +82,27 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
 
   return (
     <div className="flex-1 overflow-y-auto">
+      {/* 新建分组按钮 */}
+      <div className="border-b border-gray-100 dark:border-gray-800">
+        <button
+          onClick={() => setShowGroupModal(true)}
+          className="flex items-center w-full p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
+        >
+          <div className="mr-2">
+            <Plus className="w-4 h-4 text-gray-400" />
+          </div>
+          <span className="text-lg mr-3">➕</span>
+          <div className="flex-1">
+            <div className="font-medium text-gray-600 dark:text-gray-400">
+              新建分组
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-500">
+              创建一个新的分组来管理收藏
+            </div>
+          </div>
+        </button>
+      </div>
+      
       {groups.map((group) => {
         const isExpanded = expandedGroups.has(group.id);
         const bookmarks = getGroupBookmarks(group.id);

@@ -1,16 +1,10 @@
 // 底部操作栏组件
 import React, { useState } from 'react';
-import { Plus, Search, X } from 'lucide-react';
-import { useAppStore } from '../store/useAppStore';
+import { Search } from 'lucide-react';
 import SearchBar from './SearchBar';
 
 const ActionBar: React.FC = () => {
-  const { setShowGroupModal } = useAppStore();
   const [showSearch, setShowSearch] = useState(false);
-
-  const handleNewGroup = () => {
-    setShowGroupModal(true);
-  };
 
   const toggleSearch = () => {
     setShowSearch(!showSearch);
@@ -28,16 +22,7 @@ const ActionBar: React.FC = () => {
       
 
       
-      <div className="flex items-center justify-around p-3">
-        <button
-          onClick={handleNewGroup}
-          className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-          title="新建分组"
-        >
-          <Plus className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-          <span className="text-xs text-gray-600 dark:text-gray-400">新建</span>
-        </button>
-        
+      <div className="flex items-center justify-center p-3">
         <button
           onClick={toggleSearch}
           className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${
@@ -50,8 +35,6 @@ const ActionBar: React.FC = () => {
           <Search className="w-5 h-5" />
           <span className="text-xs">搜索</span>
         </button>
-        
-
       </div>
     </div>
   );
