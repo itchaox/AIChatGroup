@@ -4,6 +4,8 @@ export interface AITool {
   id: string;
   name: string;
   icon: string;
+  isPinned?: boolean;
+  pinnedAt?: number;
 }
 
 export interface Group {

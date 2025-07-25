@@ -1,6 +1,6 @@
 // AI工具选择器组件
 import React, { useState, useRef, useEffect } from 'react';
-import { MoreVertical, ChevronDown, Plus, Edit, Trash2 } from 'lucide-react';
+import { MoreVertical, ChevronDown, Plus, Edit, Trash2, Pin } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../lib/utils';
 
@@ -12,7 +12,8 @@ const AIToolSelector: React.FC = () => {
     showAIToolModal,
     setShowAIToolModal,
     setEditingAITool,
-    setShowAIToolAddForm
+    setShowAIToolAddForm,
+    pinAITool
   } = useAppStore();
   
   const [isOpen, setIsOpen] = useState(false);
@@ -20,6 +21,16 @@ const AIToolSelector: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const currentTool = aiTools.find(tool => tool.id === currentAITool);
+  
+  // 对AI工具进行排序：置顶的在前面，按置顶时间倒序排列
+  const sortedAITools = [...aiTools].sort((a, b) => {
+    if (a.isPinned && !b.isPinned) return -1;
+    if (!a.isPinned && b.isPinned) return 1;
+    if (a.isPinned && b.isPinned) {
+      return (b.pinnedAt || 0) - (a.pinnedAt || 0);
+    }
+    return 0;
+  });
 
   const handleToggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -56,6 +67,12 @@ const AIToolSelector: React.FC = () => {
   const handleDeleteGroup = (toolId: string) => {
     // TODO: 实现删除分组功能
     console.log('删除分组:', toolId);
+    setActiveDropdown(null);
+    setIsOpen(false);
+  };
+
+  const handlePinTool = (toolId: string) => {
+    pinAITool(toolId);
     setActiveDropdown(null);
     setIsOpen(false);
   };
@@ -120,65 +137,88 @@ const AIToolSelector: React.FC = () => {
               <div className="border-t border-gray-200 dark:border-gray-600 my-1" />
               
               {/* AI工具列表 */}
-               {aiTools.map((tool) => {
+               {sortedAITools.map((tool) => {
                  const isActive = currentAITool === tool.id;
                  return (
                    <div key={tool.id} className="group relative">
                      <button
                        onClick={() => handleSelectTool(tool.id)}
                        className={cn(
-                         "w-full flex items-center gap-3 px-4 py-3 pr-10 text-sm transition-colors text-left",
+                         "w-full flex items-center gap-3 px-4 py-3 pr-12 text-sm transition-colors text-left",
                          isActive
                            ? "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
                            : "text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
                        )}
                      >
                        <span className="text-lg">{tool.icon}</span>
-                       <span className="flex-1">{tool.name}</span>
+                       <span className="flex-1 truncate">{tool.name}</span>
                      </button>
                      
-                     {/* 省略号菜单按钮 */}
-                     <div className={cn(
-                       "absolute right-2 top-1/2 -translate-y-1/2 z-[99998] transition-opacity duration-200",
-                       activeDropdown && activeDropdown !== tool.id ? "opacity-0 pointer-events-none" : "",
-                       "opacity-0 group-hover:opacity-100"
-                     )}>
-                       <button
-                         onClick={(e) => {
-                           e.stopPropagation();
-                           setActiveDropdown(activeDropdown === tool.id ? null : tool.id);
-                         }}
-                         className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-all"
-                         title="更多选项"
-                       >
-                         <MoreVertical className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                       </button>
+                     {/* 右侧按钮区域 - 置顶图标和省略号按钮在同一位置 */}
+                     <div className="absolute right-2 top-1/2 -translate-y-1/2 z-[99998] w-6 h-6 flex items-center justify-center">
+                       {/* 置顶图标 - 默认显示，hover时隐藏 */}
+                       <div className={cn(
+                         "absolute inset-0 flex items-center justify-center transition-opacity duration-200",
+                         tool.isPinned ? "group-hover:opacity-0 opacity-100" : "opacity-0"
+                       )}>
+                         <Pin className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+                       </div>
                        
-                       {/* 下拉菜单 */}
-                       {activeDropdown === tool.id && (
-                         <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-[999999] dark:bg-gray-800 dark:border-gray-700 min-w-[120px]">
-                           <button
-                             onClick={(e) => {
-                               e.stopPropagation();
-                               handleEditTool(tool.id);
-                             }}
-                             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
-                           >
-                             <Edit className="w-3 h-3" />
-                             <span>编辑工具</span>
-                           </button>
-                           <button
-                             onClick={(e) => {
-                               e.stopPropagation();
-                               handleDeleteGroup(tool.id);
-                             }}
-                             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 transition-colors"
-                           >
-                             <Trash2 className="w-3 h-3" />
-                             <span>删除工具</span>
-                           </button>
-                         </div>
-                       )}
+                       {/* 省略号菜单按钮 - hover时显示 */}
+                       <div className={cn(
+                         "absolute inset-0 flex items-center justify-center transition-opacity duration-200",
+                         activeDropdown && activeDropdown !== tool.id ? "opacity-0 pointer-events-none" : "",
+                         "opacity-0 group-hover:opacity-100"
+                       )}>
+                         <button
+                           onClick={(e) => {
+                             e.stopPropagation();
+                             setActiveDropdown(activeDropdown === tool.id ? null : tool.id);
+                           }}
+                           className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-all"
+                           title="更多选项"
+                         >
+                           <MoreVertical className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                         </button>
+                         
+                         {/* 下拉菜单 */}
+                         {activeDropdown === tool.id && (
+                           <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-[999999] dark:bg-gray-800 dark:border-gray-700 min-w-[120px]">
+                             {!tool.isPinned && (
+                               <button
+                                 onClick={(e) => {
+                                   e.stopPropagation();
+                                   handlePinTool(tool.id);
+                                 }}
+                                 className="w-full flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20 transition-colors"
+                               >
+                                 <Pin className="w-3 h-3" />
+                                 <span>置顶</span>
+                               </button>
+                             )}
+                             <button
+                               onClick={(e) => {
+                                 e.stopPropagation();
+                                 handleEditTool(tool.id);
+                               }}
+                               className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
+                             >
+                               <Edit className="w-3 h-3" />
+                               <span>编辑工具</span>
+                             </button>
+                             <button
+                               onClick={(e) => {
+                                 e.stopPropagation();
+                                 handleDeleteGroup(tool.id);
+                               }}
+                               className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 transition-colors"
+                             >
+                               <Trash2 className="w-3 h-3" />
+                               <span>删除工具</span>
+                             </button>
+                           </div>
+                         )}
+                       </div>
                      </div>
                    </div>
                  );
