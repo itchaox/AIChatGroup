@@ -270,7 +270,7 @@ const AIToolSelector: React.FC = () => {
                                e.stopPropagation();
                                handlePinTool(tool.id);
                              }}
-                             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20 transition-colors"
+                             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
                            >
                              <Pin className="w-3 h-3" />
                              <span>置顶</span>
