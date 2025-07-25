@@ -86,13 +86,13 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
       <div className="border-b border-gray-100 dark:border-gray-800">
         <button
           onClick={() => setShowGroupModal(true)}
-          className="flex items-center w-full p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
+          className="flex items-center w-full p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
         >
-          <div className="mr-2">
-            <Plus className="w-4 h-4 text-gray-400" />
+          <div className="mr-3">
+            <Plus className="w-5 h-5 text-gray-400" />
           </div>
           <div className="flex-1">
-            <div className="font-medium text-gray-600 dark:text-gray-400">
+            <div className="font-medium text-gray-600 dark:text-gray-400 text-base">
               新建分组
             </div>
           </div>
