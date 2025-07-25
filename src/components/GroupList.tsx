@@ -208,7 +208,7 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
                 </div>
                 <span className="text-lg mr-3">{group.icon}</span>
                 <div className="flex-1">
-                  <div className="font-medium text-gray-900 dark:text-gray-100">
+                  <div className="font-medium text-gray-900 dark:text-gray-100 text-lg">
                     {group.name}
                   </div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">
