@@ -206,7 +206,7 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
             onDrop={(e) => handleDrop(e, group.id)}
           >
             <div 
-              className="flex items-center p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
+              className="flex items-center p-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors group border-l-8 border-blue-500"
             >
               <button
                 onClick={() => toggleGroup(group.id)}
