@@ -54,6 +54,8 @@ interface AppStore {
   createGroup: (name: string, icon?: string) => void;
   updateGroup: (groupId: string, updates: Partial<Group>) => void;
   deleteGroup: (groupId: string) => void;
+  pinGroup: (groupId: string) => void;
+  unpinGroup: (groupId: string) => void;
   createBookmark: (title: string, url: string, groupId: string, favicon?: string, description?: string) => void;
   updateBookmark: (bookmarkId: string, updates: Partial<Bookmark>) => void;
   deleteBookmark: (bookmarkId: string) => void;
@@ -216,6 +218,26 @@ export const useAppStore = create<AppStore>((set, get) => ({
     set({ groups, bookmarks, selectedGroup: null });
   },
 
+  // 置顶分组
+  pinGroup: (groupId: string) => {
+    updateGroupStorage(groupId, { 
+      isPinned: true, 
+      pinnedAt: Date.now() 
+    });
+    const groups = getGroups();
+    set({ groups });
+  },
+
+  // 取消置顶分组
+  unpinGroup: (groupId: string) => {
+    updateGroupStorage(groupId, { 
+      isPinned: false, 
+      pinnedAt: undefined 
+    });
+    const groups = getGroups();
+    set({ groups });
+  },
+
   // 创建收藏
   createBookmark: (title: string, url: string, groupId: string, favicon?: string, description?: string) => {
     const { currentAITool } = get();
@@ -310,7 +332,16 @@ export const useAppStore = create<AppStore>((set, get) => ({
   // 获取当前AI工具的分组
   getCurrentGroups: () => {
     const { currentAITool } = get();
-    return getGroupsByAITool(currentAITool);
+    const groups = getGroupsByAITool(currentAITool);
+    // 对分组进行排序：置顶的在前面，按置顶时间倒序排列
+    return [...groups].sort((a, b) => {
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      if (a.isPinned && b.isPinned) {
+        return (b.pinnedAt || 0) - (a.pinnedAt || 0);
+      }
+      return a.order - b.order;
+    });
   },
 
   // 获取分组的收藏

@@ -1,6 +1,6 @@
 // 分组列表组件
 import React, { useState } from 'react';
-import { ChevronDown, ChevronRight, MoreVertical, Edit, Trash2, Plus, Search, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, MoreVertical, Edit, Trash2, Plus, Search, X, Pin } from 'lucide-react';
 import { Group } from '../types';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../lib/utils';
@@ -22,7 +22,9 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
     getGroupBookmarks,
     quickAddBookmark,
     searchQuery,
-    setSearchQuery
+    setSearchQuery,
+    pinGroup,
+    unpinGroup
   } = useAppStore();
   
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
@@ -73,6 +75,16 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
       setSelectedGroup(groupId);
       setShowBookmarkModal(true);
     }
+  };
+
+  const handlePinGroup = (groupId: string) => {
+    pinGroup(groupId);
+    setShowDropdown(null);
+  };
+
+  const handleUnpinGroup = (groupId: string) => {
+    unpinGroup(groupId);
+    setShowDropdown(null);
   };
 
   const handleClearSearch = () => {
@@ -208,7 +220,7 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
           : allBookmarks;
         
         return (
-          <div key={group.id} className="border-b border-gray-100 dark:border-gray-800">
+          <div key={group.id} className="border-b border-gray-100 dark:border-gray-800 group">
             <div className="flex items-center p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
               <button
                 onClick={() => toggleGroup(group.id)}
@@ -232,40 +244,67 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
                 </div>
               </button>
               
-              <div className="relative">
-                <button
-                  onClick={() => setShowDropdown(showDropdown === group.id ? null : group.id)}
-                  className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                >
-                  <MoreVertical className="w-4 h-4 text-gray-400" />
-                </button>
-                
-                {showDropdown === group.id && (
-                  <div className="absolute right-0 top-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10 min-w-[140px]">
-                    <button
-                      onClick={() => handleAddBookmark(group.id)}
-                      className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                    >
-                      <Plus className="w-4 h-4" />
-                      快速收藏
-                    </button>
-
-                    <button
-                      onClick={() => handleEditGroup(group)}
-                      className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                    >
-                      <Edit className="w-4 h-4" />
-                      编辑分组
-                    </button>
-                    <button
-                      onClick={() => handleDeleteGroup(group)}
-                      className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      删除分组
-                    </button>
+              {/* 置顶图标和省略号图标在同一个位置 */}
+              <div className="relative w-6 h-6">
+                {/* 置顶图标 - 非hover时显示 */}
+                {group.isPinned && (
+                  <div className="absolute inset-0 p-1 flex items-center justify-center group-hover:opacity-0 transition-opacity">
+                    <Pin className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                   </div>
                 )}
+                
+                {/* 省略号图标 - hover时显示 */}
+                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                   <button
+                     onClick={() => setShowDropdown(showDropdown === group.id ? null : group.id)}
+                     className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors w-full h-full"
+                   >
+                     <MoreVertical className="w-4 h-4 text-gray-400" />
+                   </button>
+                 </div>
+                 
+                 {showDropdown === group.id && (
+                   <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10 min-w-[120px]">
+                     {group.isPinned ? (
+                       <button
+                         onClick={() => handleUnpinGroup(group.id)}
+                         className="flex items-center w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                       >
+                         <Pin className="w-4 h-4 mr-2" />
+                         取消置顶
+                       </button>
+                     ) : (
+                       <button
+                         onClick={() => handlePinGroup(group.id)}
+                         className="flex items-center w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                       >
+                         <Pin className="w-4 h-4 mr-2" />
+                         置顶分组
+                       </button>
+                     )}
+                     <button
+                       onClick={() => handleEditGroup(group)}
+                       className="flex items-center w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                     >
+                       <Edit className="w-4 h-4 mr-2" />
+                       编辑分组
+                     </button>
+                     <button
+                       onClick={() => handleDeleteGroup(group)}
+                       className="flex items-center w-full px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                     >
+                       <Trash2 className="w-4 h-4 mr-2" />
+                       删除分组
+                     </button>
+                     <button
+                       onClick={() => handleAddBookmark(group.id)}
+                       className="flex items-center w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                     >
+                       <Plus className="w-4 h-4 mr-2" />
+                       添加收藏
+                     </button>
+                   </div>
+                 )}
               </div>
             </div>
             

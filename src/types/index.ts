@@ -16,6 +16,8 @@ export interface Group {
   createdAt: number;
   updatedAt: number;
   order: number;
+  isPinned?: boolean;
+  pinnedAt?: number;
 }
 
 export interface Bookmark {
