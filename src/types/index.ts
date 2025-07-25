@@ -54,7 +54,7 @@ export const DEFAULT_AI_TOOLS: AITool[] = [
   {
     id: 'claude',
     name: 'Claude',
-    icon: '🧠'
+    icon: '⚡'
   },
   {
     id: 'gemini',
@@ -70,6 +70,11 @@ export const DEFAULT_AI_TOOLS: AITool[] = [
     id: 'doubao',
     name: '豆包',
     icon: '🚀'
+  },
+  {
+    id: 'kimi',
+    name: 'Kimi',
+    icon: '🌙'
   }
 ];
 
