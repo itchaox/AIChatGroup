@@ -1,6 +1,6 @@
 // 收藏项组件
 import React, { useState } from 'react';
-import { ExternalLink, MoreVertical, Edit, Trash2, Globe, Pin } from 'lucide-react';
+import { MoreVertical, Edit, Trash2, Globe, Pin } from 'lucide-react';
 import { Bookmark } from '../types';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../lib/utils';
@@ -132,19 +132,6 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
         </div>
         
         <div className="flex items-center gap-1">
-          <div className={`flex items-center gap-1 transition-opacity ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(bookmark.url, '_blank');
-              }}
-              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-              title="在新标签页打开"
-            >
-              <ExternalLink className="w-4 h-4 text-gray-400" />
-            </button>
-          </div>
-          
           {/* 置顶图标和省略号图标在同一个位置 */}
           <div className="relative w-6 h-6">
             {/* 置顶图标 - 非hover时显示 */}
