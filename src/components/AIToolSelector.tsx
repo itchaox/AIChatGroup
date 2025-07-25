@@ -197,7 +197,7 @@ const AIToolSelector: React.FC = () => {
                                    e.stopPropagation();
                                    handleUnpinTool(tool.id);
                                  }}
-                                 className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 transition-colors"
+                                 className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
                                >
                                  <Pin className="w-3 h-3" />
                                  <span>取消置顶</span>
