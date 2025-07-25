@@ -156,10 +156,10 @@ const AIToolSelector: React.FC = () => {
                      
                      {/* 右侧按钮区域 - 置顶图标和省略号按钮在同一位置 */}
                      <div className="absolute right-2 top-1/2 -translate-y-1/2 z-[99998] w-6 h-6 flex items-center justify-center">
-                       {/* 置顶图标 - 默认显示，hover时隐藏 */}
+                       {/* 置顶图标 - 默认显示，hover时隐藏，有下拉菜单时也隐藏 */}
                        <div className={cn(
                          "absolute inset-0 flex items-center justify-center transition-opacity duration-200",
-                         tool.isPinned ? "group-hover:opacity-0 opacity-100" : "opacity-0"
+                         tool.isPinned && !activeDropdown ? "group-hover:opacity-0 opacity-100" : "opacity-0"
                        )}>
                          <Pin className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                        </div>
