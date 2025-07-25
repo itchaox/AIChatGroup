@@ -138,7 +138,10 @@ const AIToolSelector: React.FC = () => {
                      </button>
                      
                      {/* 省略号菜单按钮 */}
-                     <div className="absolute right-2 top-1/2 -translate-y-1/2 z-[99998]">
+                     <div className={cn(
+                       "absolute right-2 top-1/2 -translate-y-1/2 z-[99998]",
+                       activeDropdown && activeDropdown !== tool.id ? "opacity-0 pointer-events-none" : ""
+                     )}>
                        <button
                          onClick={(e) => {
                            e.stopPropagation();
@@ -152,7 +155,7 @@ const AIToolSelector: React.FC = () => {
                        
                        {/* 下拉菜单 */}
                        {activeDropdown === tool.id && (
-                         <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-[99999] dark:bg-gray-800 dark:border-gray-700 min-w-[120px]">
+                         <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-[999999] dark:bg-gray-800 dark:border-gray-700 min-w-[120px]">
                            <button
                              onClick={(e) => {
                                e.stopPropagation();
