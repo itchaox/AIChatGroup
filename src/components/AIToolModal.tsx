@@ -3,13 +3,10 @@ import { X, Plus, Edit2, Trash2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { AITool, AI_TOOL_ICONS } from '../types';
 
-interface AIToolModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-export const AIToolModal: React.FC<AIToolModalProps> = ({ isOpen, onClose }) => {
+export const AIToolModal: React.FC = () => {
   const {
+    showAIToolModal,
+    setShowAIToolModal,
     aiTools,
     editingAITool,
     createAITool,
@@ -24,22 +21,27 @@ export const AIToolModal: React.FC<AIToolModalProps> = ({ isOpen, onClose }) => 
   });
 
   const [showForm, setShowForm] = useState(false);
+  const [showManagement, setShowManagement] = useState(false);
 
   useEffect(() => {
-    if (editingAITool) {
-      setFormData({
-        name: editingAITool.name,
-        icon: editingAITool.icon
-      });
-      setShowForm(true);
+    if (showAIToolModal) {
+      if (editingAITool) {
+        setFormData({
+          name: editingAITool.name,
+          icon: editingAITool.icon
+        });
+        setShowForm(true);
+        setShowManagement(false);
+      } else {
+        setShowForm(false);
+        setShowManagement(true);
+      }
     } else {
-      setFormData({
-        name: '',
-        icon: '🤖'
-      });
+      setFormData({ name: '', icon: '🤖' });
       setShowForm(false);
+      setShowManagement(false);
     }
-  }, [editingAITool]);
+  }, [showAIToolModal, editingAITool]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,16 +57,30 @@ export const AIToolModal: React.FC<AIToolModalProps> = ({ isOpen, onClose }) => 
   };
 
   const handleCancel = () => {
-    setFormData({
-      name: '',
-      icon: '🤖'
-    });
-    setShowForm(false);
-    setEditingAITool(null);
+    if (showForm) {
+      // 如果是编辑模式，直接关闭整个弹窗
+      if (editingAITool) {
+        setShowAIToolModal(false);
+      } else {
+        // 如果是新增模式，回到管理界面
+        setShowForm(false);
+        setShowManagement(true);
+      }
+      setEditingAITool(null);
+      setFormData({ name: '', icon: '🤖' });
+    } else {
+      setShowAIToolModal(false);
+    }
   };
 
   const handleEdit = (tool: AITool) => {
     setEditingAITool(tool);
+    setFormData({
+      name: tool.name,
+      icon: tool.icon
+    });
+    setShowForm(true);
+    setShowManagement(false);
   };
 
   const handleDelete = (toolId: string) => {
@@ -75,20 +91,22 @@ export const AIToolModal: React.FC<AIToolModalProps> = ({ isOpen, onClose }) => 
 
   const handleAddNew = () => {
     setEditingAITool(null);
+    setFormData({ name: '', icon: '🤖' });
     setShowForm(true);
+    setShowManagement(false);
   };
 
-  if (!isOpen) return null;
+  if (!showAIToolModal) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b">
           <h2 className="text-xl font-semibold text-gray-900">
-            AI工具管理
+            {showForm ? (editingAITool ? '编辑工具' : '添加工具') : 'AI工具管理'}
           </h2>
           <button
-            onClick={onClose}
+            onClick={() => setShowAIToolModal(false)}
             className="text-gray-400 hover:text-gray-600 transition-colors"
           >
             <X className="w-6 h-6" />
@@ -96,7 +114,7 @@ export const AIToolModal: React.FC<AIToolModalProps> = ({ isOpen, onClose }) => 
         </div>
 
         <div className="p-6 overflow-y-auto max-h-[calc(80vh-120px)]">
-          {!showForm ? (
+          {showManagement ? (
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-medium text-gray-900">已有工具</h3>
@@ -157,18 +175,6 @@ export const AIToolModal: React.FC<AIToolModalProps> = ({ isOpen, onClose }) => 
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-900">
-                  {editingAITool ? '编辑工具' : '添加工具'}
-                </h3>
-                <button
-                  type="button"
-                  onClick={handleCancel}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">

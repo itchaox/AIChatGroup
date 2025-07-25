@@ -1,9 +1,8 @@
 // AI工具选择器组件
 import React, { useState, useRef, useEffect } from 'react';
-import { Settings, ChevronDown, Plus } from 'lucide-react';
+import { Settings, ChevronDown, Plus, Cog } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../lib/utils';
-import { AIToolModal } from './AIToolModal';
 
 const AIToolSelector: React.FC = () => {
   const { 
@@ -39,6 +38,12 @@ const AIToolSelector: React.FC = () => {
   };
 
   const handleAddNewTool = () => {
+    setEditingAITool(null);
+    setShowAIToolModal(true);
+    setIsOpen(false);
+  };
+
+  const handleManageTools = () => {
     setEditingAITool(null);
     setShowAIToolModal(true);
     setIsOpen(false);
@@ -126,6 +131,15 @@ const AIToolSelector: React.FC = () => {
               {/* 分隔线 */}
               <div className="border-t border-gray-200 dark:border-gray-600 my-1" />
               
+              {/* 管理工具按钮 */}
+              <button
+                onClick={handleManageTools}
+                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20 transition-colors"
+              >
+                <Cog className="w-4 h-4" />
+                <span>管理工具</span>
+              </button>
+              
               {/* 新增工具按钮 */}
               <button
                 onClick={handleAddNewTool}
@@ -139,11 +153,7 @@ const AIToolSelector: React.FC = () => {
         </div>
       </div>
 
-      {/* AI工具管理模态框 */}
-      <AIToolModal
-        isOpen={showAIToolModal}
-        onClose={() => setShowAIToolModal(false)}
-      />
+
     </>
   );
 };

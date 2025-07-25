@@ -6,6 +6,7 @@ import GroupList from './components/GroupList';
 import ActionBar from './components/ActionBar';
 import GroupModal from './components/GroupModal';
 import BookmarkModal from './components/BookmarkModal';
+import { AIToolModal } from './components/AIToolModal';
 import { Toaster } from 'sonner';
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
       {/* 模态框 */}
       <GroupModal />
       <BookmarkModal />
+      <AIToolModal />
       
       {/* 通知组件 */}
       <Toaster 
