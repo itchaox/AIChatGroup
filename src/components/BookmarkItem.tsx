@@ -94,11 +94,15 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
 
   const faviconUrl = getFaviconUrl();
 
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
-    <div className="group relative">
+    <div className="relative">
       <div
         className="flex items-center py-2 px-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
         onClick={handleClick}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         <div className="flex-shrink-0 w-6 h-6 mr-3 flex items-center justify-center">
           {faviconUrl && !imageError ? (
@@ -128,7 +132,7 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
         </div>
         
         <div className="flex items-center gap-1">
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className={`flex items-center gap-1 transition-opacity ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -145,13 +149,13 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
           <div className="relative w-6 h-6">
             {/* 置顶图标 - 非hover时显示 */}
             {bookmark.isPinned && (
-              <div className="absolute inset-0 p-1 flex items-center justify-center group-hover:opacity-0 transition-opacity">
+              <div className={`absolute inset-0 p-1 flex items-center justify-center transition-opacity ${isHovered ? 'opacity-0' : 'opacity-100'}`}>
                 <Pin className="w-4 h-4 text-gray-500 dark:text-gray-400" />
               </div>
             )}
             
             {/* 省略号图标 - hover时显示 */}
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className={`absolute inset-0 transition-opacity ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
               <button
                 onClick={(e) => {
                   e.stopPropagation();

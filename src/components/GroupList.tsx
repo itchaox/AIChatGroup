@@ -220,8 +220,8 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
           : allBookmarks;
         
         return (
-          <div key={group.id} className="border-b border-gray-100 dark:border-gray-800 group">
-            <div className="flex items-center p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+          <div key={group.id} className="border-b border-gray-100 dark:border-gray-800">
+            <div className="flex items-center p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group">
               <button
                 onClick={() => toggleGroup(group.id)}
                 className="flex items-center flex-1 text-left"
