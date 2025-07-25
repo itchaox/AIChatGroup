@@ -197,15 +197,13 @@ export const getBookmarksByGroup = (groupId: string): Bookmark[] => {
 };
 
 // 创建新AI工具
-export const createAITool = (name: string, icon: string, color: string, url?: string): AITool => {
+export const createAITool = (name: string, icon: string): AITool => {
   const aiTools = getAITools();
   
   const newAITool: AITool = {
     id: generateId(),
     name,
-    icon,
-    color,
-    url
+    icon
   };
   
   const updatedAITools = [...aiTools, newAITool];

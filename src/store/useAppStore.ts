@@ -13,9 +13,9 @@ import {
   createBookmarkStorage,
   updateBookmarkStorage,
   deleteBookmarkStorage,
-  createAIToolStorage,
-  updateAIToolStorage,
-  deleteAIToolStorage,
+  createAITool as createAIToolStorage,
+  updateAITool as updateAIToolStorage,
+  deleteAITool as deleteAIToolStorage,
   getGroupsByAITool,
   getBookmarksByGroup
 } from '../utils/storage';
@@ -56,7 +56,7 @@ interface AppStore {
   updateBookmark: (bookmarkId: string, updates: Partial<Bookmark>) => void;
   deleteBookmark: (bookmarkId: string) => void;
   quickAddBookmark: (groupId: string) => Promise<boolean>;
-  createAITool: (name: string, icon: string, color: string, url?: string) => void;
+  createAITool: (name: string, icon: string) => void;
   updateAITool: (toolId: string, updates: Partial<AITool>) => void;
   deleteAITool: (toolId: string) => void;
   
@@ -227,8 +227,8 @@ export const useAppStore = create<AppStore>((set, get) => ({
   },
 
   // 创建AI工具
-  createAITool: (name: string, icon: string, color: string, url?: string) => {
-    const newAITool = createAIToolStorage(name, icon, color, url);
+  createAITool: (name: string, icon: string) => {
+    const newAITool = createAIToolStorage(name, icon);
     const aiTools = getAITools();
     set({ aiTools });
   },

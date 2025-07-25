@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Edit2, Trash2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
-import { AITool, AI_TOOL_ICONS, AI_TOOL_COLORS } from '../types';
+import { AITool, AI_TOOL_ICONS } from '../types';
 
 interface AIToolModalProps {
   isOpen: boolean;
@@ -20,9 +20,7 @@ export const AIToolModal: React.FC<AIToolModalProps> = ({ isOpen, onClose }) => 
 
   const [formData, setFormData] = useState({
     name: '',
-    icon: '🤖',
-    color: '#10A37F',
-    url: ''
+    icon: '🤖'
   });
 
   const [showForm, setShowForm] = useState(false);
@@ -31,17 +29,13 @@ export const AIToolModal: React.FC<AIToolModalProps> = ({ isOpen, onClose }) => 
     if (editingAITool) {
       setFormData({
         name: editingAITool.name,
-        icon: editingAITool.icon,
-        color: editingAITool.color,
-        url: editingAITool.url || ''
+        icon: editingAITool.icon
       });
       setShowForm(true);
     } else {
       setFormData({
         name: '',
-        icon: '🤖',
-        color: '#10A37F',
-        url: ''
+        icon: '🤖'
       });
       setShowForm(false);
     }
@@ -52,9 +46,9 @@ export const AIToolModal: React.FC<AIToolModalProps> = ({ isOpen, onClose }) => 
     if (!formData.name.trim()) return;
 
     if (editingAITool) {
-      updateAITool(editingAITool.id, formData);
+      updateAITool(editingAITool.id, { name: formData.name, icon: formData.icon });
     } else {
-      createAITool(formData.name, formData.icon, formData.color, formData.url || undefined);
+      createAITool(formData.name, formData.icon);
     }
 
     handleCancel();
@@ -63,9 +57,7 @@ export const AIToolModal: React.FC<AIToolModalProps> = ({ isOpen, onClose }) => 
   const handleCancel = () => {
     setFormData({
       name: '',
-      icon: '🤖',
-      color: '#10A37F',
-      url: ''
+      icon: '🤖'
     });
     setShowForm(false);
     setEditingAITool(null);
@@ -124,19 +116,11 @@ export const AIToolModal: React.FC<AIToolModalProps> = ({ isOpen, onClose }) => 
                     className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <div
-                        className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-lg"
-                        style={{ backgroundColor: tool.color }}
-                      >
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-gray-100 text-lg">
                         {tool.icon}
                       </div>
                       <div>
                         <h4 className="font-medium text-gray-900">{tool.name}</h4>
-                        {tool.url && (
-                          <p className="text-sm text-gray-500 truncate max-w-xs">
-                            {tool.url}
-                          </p>
-                        )}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -220,42 +204,8 @@ export const AIToolModal: React.FC<AIToolModalProps> = ({ isOpen, onClose }) => 
                     </button>
                   ))}
                 </div>
-                <input
-                  type="text"
-                  value={formData.icon}
-                  onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="或输入自定义图标"
-                />
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  主题颜色
-                </label>
-                <div className="grid grid-cols-5 gap-2 mb-3">
-                  {AI_TOOL_COLORS.map((color) => (
-                    <button
-                      key={color}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, color })}
-                      className={`w-12 h-8 rounded-lg transition-all ${
-                        formData.color === color
-                          ? 'ring-2 ring-gray-400 ring-offset-2'
-                          : 'hover:scale-105'
-                      }`}
-                      style={{ backgroundColor: color }}
-                    />
-                  ))}
-                </div>
-                <input
-                  type="color"
-                  value={formData.color}
-                  onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                  className="w-full h-10 border border-gray-300 rounded-lg cursor-pointer"
-                />
               </div>
-
 
 
               <div className="flex justify-end gap-3 pt-4 border-t">

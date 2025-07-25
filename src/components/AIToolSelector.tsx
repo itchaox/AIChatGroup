@@ -106,12 +106,6 @@ const AIToolSelector: React.FC = () => {
                      >
                        <span className="text-lg">{tool.icon}</span>
                        <span className="flex-1">{tool.name}</span>
-                       {isActive && (
-                         <div 
-                           className="w-2 h-2 rounded-full" 
-                           style={{ backgroundColor: tool.color }}
-                         />
-                       )}
                      </button>
                      
                      {/* 编辑按钮 */}
