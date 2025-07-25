@@ -62,6 +62,7 @@ interface AppStore {
   quickAddBookmark: (groupId: string) => Promise<boolean>;
   pinBookmark: (bookmarkId: string) => void;
   unpinBookmark: (bookmarkId: string) => void;
+  moveBookmarkToGroup: (bookmarkId: string, targetGroupId: string) => void;
   createAITool: (name: string, icon: string) => void;
   updateAITool: (toolId: string, updates: Partial<AITool>) => void;
   deleteAITool: (toolId: string) => void;
@@ -276,6 +277,13 @@ export const useAppStore = create<AppStore>((set, get) => ({
       isPinned: false, 
       pinnedAt: undefined 
     });
+    const bookmarks = getBookmarks();
+    set({ bookmarks });
+  },
+
+  // 移动收藏到其他分组
+  moveBookmarkToGroup: (bookmarkId: string, targetGroupId: string) => {
+    updateBookmarkStorage(bookmarkId, { groupId: targetGroupId });
     const bookmarks = getBookmarks();
     set({ bookmarks });
   },

@@ -24,13 +24,16 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
     searchQuery,
     setSearchQuery,
     pinGroup,
-    unpinGroup
+    unpinGroup,
+    moveBookmarkToGroup
   } = useAppStore();
   
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   const [showDropdown, setShowDropdown] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deletingGroup, setDeletingGroup] = useState<Group | null>(null);
+  const [dragOverGroup, setDragOverGroup] = useState<string | null>(null);
+  const [draggedBookmark, setDraggedBookmark] = useState<{id: string, title: string} | null>(null);
 
   const toggleGroup = (groupId: string) => {
     const newExpanded = new Set(expandedGroups);
@@ -89,6 +92,52 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
 
   const handleClearSearch = () => {
     setSearchQuery('');
+  };
+
+  // 拖拽事件处理
+  const handleDragOver = (e: React.DragEvent, groupId: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverGroup(groupId);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    // 只有当鼠标真正离开分组区域时才清除高亮
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+    
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+      setDragOverGroup(null);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent, targetGroupId: string) => {
+    e.preventDefault();
+    setDragOverGroup(null);
+    
+    try {
+      const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+      const { bookmarkId, bookmarkTitle } = data;
+      
+      if (bookmarkId && targetGroupId) {
+        // 检查收藏是否已经在目标分组中
+        const targetGroupBookmarks = getGroupBookmarks(targetGroupId);
+        const isAlreadyInGroup = targetGroupBookmarks.some(bookmark => bookmark.id === bookmarkId);
+        
+        if (!isAlreadyInGroup) {
+          moveBookmarkToGroup(bookmarkId, targetGroupId);
+          setDraggedBookmark({ id: bookmarkId, title: bookmarkTitle });
+          
+          // 3秒后清除拖拽状态
+          setTimeout(() => {
+            setDraggedBookmark(null);
+          }, 3000);
+        }
+      }
+    } catch (error) {
+      console.error('拖拽处理失败:', error);
+    }
   };
 
   // 检查是否有搜索查询
@@ -153,8 +202,20 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
           : allBookmarks;
         
         return (
-          <div key={group.id} className="border-b border-gray-100 dark:border-gray-800">
-            <div className="flex items-center p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group">
+          <div 
+            key={group.id} 
+            className={cn(
+              "border-b border-gray-100 dark:border-gray-800",
+              dragOverGroup === group.id && "bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600",
+              draggedBookmark?.id && getGroupBookmarks(group.id).some(b => b.id === draggedBookmark.id) && "bg-green-100 dark:bg-green-900/30"
+            )}
+            onDragOver={(e) => handleDragOver(e, group.id)}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => handleDrop(e, group.id)}
+          >
+            <div 
+              className="flex items-center p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
+            >
               <button
                 onClick={() => toggleGroup(group.id)}
                 className="flex items-center flex-1 text-left"
@@ -170,6 +231,16 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
                 <div className="flex-1">
                   <div className="font-medium text-gray-900 dark:text-gray-100 text-lg">
                     {group.name}
+                    {dragOverGroup === group.id && (
+                      <span className="ml-2 text-sm text-blue-600 dark:text-blue-400">
+                        (拖拽到此分组)
+                      </span>
+                    )}
+                    {draggedBookmark?.id && getGroupBookmarks(group.id).some(b => b.id === draggedBookmark.id) && (
+                      <span className="ml-2 text-sm text-green-600 dark:text-green-400">
+                        (已移动到此分组)
+                      </span>
+                    )}
                   </div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">
                     {hasSearchQuery ? `${filteredBookmarks.length}/${allBookmarks.length}` : allBookmarks.length} 个收藏

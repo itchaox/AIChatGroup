@@ -16,12 +16,15 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
     setEditingBookmark,
     deleteBookmark,
     pinBookmark,
-    unpinBookmark
+    unpinBookmark,
+    moveBookmarkToGroup
   } = useAppStore();
   
   const [showDropdown, setShowDropdown] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -94,15 +97,33 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
 
   const faviconUrl = getFaviconUrl();
 
-  const [isHovered, setIsHovered] = useState(false);
+  // 拖拽事件处理
+  const handleDragStart = (e: React.DragEvent) => {
+    setIsDragging(true);
+    e.dataTransfer.setData('text/plain', JSON.stringify({
+      bookmarkId: bookmark.id,
+      bookmarkTitle: bookmark.title
+    }));
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+  };
 
   return (
     <div className="relative">
       <div
-        className="flex items-center py-2 px-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+        className={cn(
+          "flex items-center py-2 px-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer",
+          isDragging && "opacity-50 bg-blue-50 dark:bg-blue-900/20"
+        )}
+        draggable
         onClick={handleClick}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
       >
         <div className="flex-shrink-0 w-6 h-6 mr-3 flex items-center justify-center">
           {faviconUrl && !imageError ? (
