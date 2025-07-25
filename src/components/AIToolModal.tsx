@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, Plus, Edit2, Trash2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { AITool, AI_TOOL_ICONS } from '../types';
@@ -24,6 +24,7 @@ export const AIToolModal: React.FC = () => {
 
   const [showForm, setShowForm] = useState(false);
   const [showManagement, setShowManagement] = useState(false);
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (showAIToolModal) {
@@ -48,6 +49,16 @@ export const AIToolModal: React.FC = () => {
       setShowManagement(false);
     }
   }, [showAIToolModal, editingAITool, showAIToolAddForm]);
+
+  // 当表单显示时自动聚焦到工具名称输入框
+  useEffect(() => {
+    if (showForm && nameInputRef.current) {
+      // 使用setTimeout确保DOM已经渲染完成
+      setTimeout(() => {
+        nameInputRef.current?.focus();
+      }, 100);
+    }
+  }, [showForm]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,6 +202,7 @@ export const AIToolModal: React.FC = () => {
                   工具名称
                 </label>
                 <input
+                  ref={nameInputRef}
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
