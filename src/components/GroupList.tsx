@@ -91,8 +91,6 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
     setSearchQuery('');
   };
 
-
-
   // 检查是否有搜索查询
   const hasSearchQuery = searchQuery.trim().length > 0;
   
@@ -101,30 +99,6 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
       // 搜索无结果的情况
       return (
         <div className="flex-1 overflow-y-auto">
-          {/* 搜索框 */}
-          <div className="p-4 border-b border-gray-100 dark:border-gray-800">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="搜索收藏..."
-                className="w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm"
-              />
-              {searchQuery && (
-                <button
-                  onClick={handleClearSearch}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                >
-                  <X className="h-4 w-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
-                </button>
-              )}
-            </div>
-          </div>
-          
           {/* 搜索无结果状态 */}
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
             <div className="text-6xl mb-4">🔍</div>
@@ -167,47 +141,6 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      {/* 搜索框 */}
-      <div className="p-4 border-b border-gray-100 dark:border-gray-800">
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-4 w-4 text-gray-400" />
-          </div>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="搜索收藏..."
-            className="w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm"
-          />
-          {searchQuery && (
-            <button
-              onClick={handleClearSearch}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center"
-            >
-              <X className="h-4 w-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
-            </button>
-          )}
-        </div>
-      </div>
-      
-      {/* 新建分组按钮 */}
-      <div className="border-b border-gray-100 dark:border-gray-800">
-        <button
-          onClick={() => setShowGroupModal(true)}
-          className="flex items-center w-full p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
-        >
-          <div className="mr-3">
-            <Plus className="w-5 h-5 text-gray-400" />
-          </div>
-          <div className="flex-1">
-            <div className="font-medium text-gray-600 dark:text-gray-400 text-base">
-              新建分组
-            </div>
-          </div>
-        </button>
-      </div>
-      
       {groups.map((group) => {
         const isExpanded = expandedGroups.has(group.id);
         const allBookmarks = getGroupBookmarks(group.id);
