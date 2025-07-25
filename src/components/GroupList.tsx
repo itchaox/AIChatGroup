@@ -259,14 +259,14 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
                 {filteredBookmarks.length === 0 ? (
                   <div className="p-4 text-center text-gray-500 dark:text-gray-400">
                     {hasSearchQuery ? (
-                      <p className="mb-2">没有匹配的收藏</p>
+                      <p className="mb-2 text-base">没有匹配的收藏</p>
                     ) : (
                       <>
-                        <p className="mb-2">这个分组还没有收藏</p>
+                        <p className="mb-2 text-base">这个分组还没有收藏</p>
                         <div className="flex gap-2 justify-center">
                           <button
                             onClick={() => handleAddBookmark(group.id)}
-                            className="text-blue-600 dark:text-blue-400 hover:underline"
+                            className="text-blue-600 dark:text-blue-400 hover:underline text-base"
                           >
                             快速收藏
                           </button>
