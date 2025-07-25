@@ -136,8 +136,8 @@ export const AIToolModal: React.FC = () => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[80vh] overflow-hidden">
           <div className="flex items-center justify-between p-6 border-b">
             <h2 className="text-xl font-semibold text-gray-900">
               {showForm ? (editingAITool ? '编辑工具' : '添加工具') : 'AI工具管理'}
@@ -232,13 +232,13 @@ export const AIToolModal: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     工具图标
                   </label>
-                  <div className="grid grid-cols-8 gap-2 mb-3">
+                  <div className="grid grid-cols-8 gap-2 mb-3 px-2">
                     {AI_TOOL_ICONS.map((icon) => (
                       <button
                         key={icon}
                         type="button"
                         onClick={() => setFormData({ ...formData, icon })}
-                        className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-colors ${
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm transition-colors ${
                           formData.icon === icon
                             ? 'bg-blue-100 border-2 border-blue-500'
                             : 'bg-gray-100 hover:bg-gray-200 border border-gray-300'
