@@ -96,7 +96,7 @@ const AIToolSelector: React.FC = () => {
 
           {/* 下拉菜单 */}
           {isOpen && (
-            <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 dark:bg-gray-800 dark:border-gray-700 max-h-96 overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 dark:bg-gray-800 dark:border-gray-700 max-h-[460px] overflow-y-auto">
               {/* 管理工具按钮 */}
               <button
                 onClick={handleManageTools}
