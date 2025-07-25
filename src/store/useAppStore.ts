@@ -306,8 +306,17 @@ export const useAppStore = create<AppStore>((set, get) => ({
     }
     
     const query = searchQuery.toLowerCase();
-    return groups.filter(group => 
-      group.name.toLowerCase().includes(query)
-    );
+    return groups.filter(group => {
+      // 搜索分组名称
+      if (group.name.toLowerCase().includes(query)) {
+        return true;
+      }
+      
+      // 搜索分组下的收藏标题
+      const bookmarks = getBookmarksByGroup(group.id);
+      return bookmarks.some(bookmark => 
+        bookmark.title.toLowerCase().includes(query)
+      );
+    });
   }
 }));

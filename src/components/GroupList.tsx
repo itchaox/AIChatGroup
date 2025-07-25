@@ -1,6 +1,6 @@
 // 分组列表组件
 import React, { useState } from 'react';
-import { ChevronDown, ChevronRight, MoreVertical, Edit, Trash2, Plus } from 'lucide-react';
+import { ChevronDown, ChevronRight, MoreVertical, Edit, Trash2, Plus, Search, X } from 'lucide-react';
 import { Group } from '../types';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../lib/utils';
@@ -19,7 +19,9 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
     setEditingGroup,
     deleteGroup,
     getGroupBookmarks,
-    quickAddBookmark
+    quickAddBookmark,
+    searchQuery,
+    setSearchQuery
   } = useAppStore();
   
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
@@ -58,30 +60,110 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
     }
   };
 
+  const handleClearSearch = () => {
+    setSearchQuery('');
+  };
 
 
+
+  // 检查是否有搜索查询
+  const hasSearchQuery = searchQuery.trim().length > 0;
+  
   if (groups.length === 0) {
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-        <div className="text-6xl mb-4">📁</div>
-        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-          还没有分组
-        </h3>
-        <p className="text-gray-500 dark:text-gray-400 mb-4">
-          创建第一个分组来开始管理你的AI工具收藏
-        </p>
-        <button
-          onClick={() => setShowGroupModal(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          创建分组
-        </button>
-      </div>
-    );
+    if (hasSearchQuery) {
+      // 搜索无结果的情况
+      return (
+        <div className="flex-1 overflow-y-auto">
+          {/* 搜索框 */}
+          <div className="p-4 border-b border-gray-100 dark:border-gray-800">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="搜索收藏..."
+                className="w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm"
+              />
+              {searchQuery && (
+                <button
+                  onClick={handleClearSearch}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                >
+                  <X className="h-4 w-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
+                </button>
+              )}
+            </div>
+          </div>
+          
+          {/* 搜索无结果状态 */}
+          <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+            <div className="text-6xl mb-4">🔍</div>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+              暂无搜索结果
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 mb-4">
+              没有找到包含 "{searchQuery}" 的分组或收藏
+            </p>
+            <button
+              onClick={handleClearSearch}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              清除搜索
+            </button>
+          </div>
+        </div>
+      );
+    } else {
+      // 没有分组的情况
+      return (
+        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+          <div className="text-6xl mb-4">📁</div>
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+            还没有分组
+          </h3>
+          <p className="text-gray-500 dark:text-gray-400 mb-4">
+            创建第一个分组来开始管理你的AI工具收藏
+          </p>
+          <button
+            onClick={() => setShowGroupModal(true)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            创建分组
+          </button>
+        </div>
+      );
+    }
   }
 
   return (
     <div className="flex-1 overflow-y-auto">
+      {/* 搜索框 */}
+      <div className="p-4 border-b border-gray-100 dark:border-gray-800">
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-4 w-4 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="搜索收藏..."
+            className="w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm"
+          />
+          {searchQuery && (
+            <button
+              onClick={handleClearSearch}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+            >
+              <X className="h-4 w-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
+            </button>
+          )}
+        </div>
+      </div>
+      
       {/* 新建分组按钮 */}
       <div className="border-b border-gray-100 dark:border-gray-800">
         <button
@@ -101,7 +183,14 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
       
       {groups.map((group) => {
         const isExpanded = expandedGroups.has(group.id);
-        const bookmarks = getGroupBookmarks(group.id);
+        const allBookmarks = getGroupBookmarks(group.id);
+        
+        // 根据搜索查询过滤收藏
+        const filteredBookmarks = hasSearchQuery 
+          ? allBookmarks.filter(bookmark => 
+              bookmark.title.toLowerCase().includes(searchQuery.toLowerCase())
+            )
+          : allBookmarks;
         
         return (
           <div key={group.id} className="border-b border-gray-100 dark:border-gray-800">
@@ -123,7 +212,7 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
                     {group.name}
                   </div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">
-                    {bookmarks.length} 个收藏
+                    {hasSearchQuery ? `${filteredBookmarks.length}/${allBookmarks.length}` : allBookmarks.length} 个收藏
                   </div>
                 </div>
               </button>
@@ -167,21 +256,27 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
             
             {isExpanded && (
               <div className="bg-gray-50 dark:bg-gray-900">
-                {bookmarks.length === 0 ? (
+                {filteredBookmarks.length === 0 ? (
                   <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-                    <p className="mb-2">这个分组还没有收藏</p>
-                    <div className="flex gap-2 justify-center">
-                      <button
-                        onClick={() => handleAddBookmark(group.id)}
-                        className="text-blue-600 dark:text-blue-400 hover:underline"
-                      >
-                        快速收藏
-                      </button>
-                    </div>
+                    {hasSearchQuery ? (
+                      <p className="mb-2">没有匹配的收藏</p>
+                    ) : (
+                      <>
+                        <p className="mb-2">这个分组还没有收藏</p>
+                        <div className="flex gap-2 justify-center">
+                          <button
+                            onClick={() => handleAddBookmark(group.id)}
+                            className="text-blue-600 dark:text-blue-400 hover:underline"
+                          >
+                            快速收藏
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 ) : (
                   <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                    {bookmarks.map((bookmark) => (
+                    {filteredBookmarks.map((bookmark) => (
                       <BookmarkItem key={bookmark.id} bookmark={bookmark} />
                     ))}
                   </div>
