@@ -128,13 +128,6 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
         </div>
         
         <div className="flex items-center gap-1">
-          {/* 置顶图标 - 始终显示如果已置顶 */}
-          {bookmark.isPinned && (
-            <div className="p-1 flex items-center justify-center">
-              <Pin className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-            </div>
-          )}
-          
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
               onClick={(e) => {
@@ -146,14 +139,25 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
             >
               <ExternalLink className="w-4 h-4 text-gray-400" />
             </button>
+          </div>
+          
+          {/* 置顶图标和省略号图标在同一个位置 */}
+          <div className="relative">
+            {/* 置顶图标 - 非hover时显示 */}
+            {bookmark.isPinned && (
+              <div className="p-1 flex items-center justify-center group-hover:opacity-0 transition-opacity">
+                <Pin className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              </div>
+            )}
             
-            <div className="relative">
+            {/* 省略号图标 - hover时显示 */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowDropdown(!showDropdown);
                 }}
-                className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors w-full h-full"
               >
                 <MoreVertical className="w-4 h-4 text-gray-400" />
               </button>
