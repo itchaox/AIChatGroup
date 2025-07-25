@@ -91,13 +91,9 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
           <div className="mr-2">
             <Plus className="w-4 h-4 text-gray-400" />
           </div>
-          <span className="text-lg mr-3">➕</span>
           <div className="flex-1">
             <div className="font-medium text-gray-600 dark:text-gray-400">
               新建分组
-            </div>
-            <div className="text-sm text-gray-500 dark:text-gray-500">
-              创建一个新的分组来管理收藏
             </div>
           </div>
         </button>
