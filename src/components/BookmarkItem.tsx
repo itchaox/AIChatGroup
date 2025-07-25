@@ -1,5 +1,5 @@
 // 收藏项组件
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MoreVertical, Edit, Trash2, Globe, Pin } from 'lucide-react';
 import { Bookmark } from '../types';
 import { useAppStore } from '../store/useAppStore';
@@ -12,6 +12,7 @@ interface BookmarkItemProps {
 
 const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
   const {
+    showBookmarkModal,
     setShowBookmarkModal,
     setEditingBookmark,
     deleteBookmark,
@@ -25,6 +26,14 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+
+  // 监听弹窗状态变化，当弹窗关闭时自动关闭dropdown菜单和重置hover状态
+  useEffect(() => {
+    if (!showBookmarkModal) {
+      setShowDropdown(false);
+      setIsHovered(false);
+    }
+  }, [showBookmarkModal]);
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -60,11 +69,13 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
     setEditingBookmark(bookmark);
     setShowBookmarkModal(true);
     setShowDropdown(false);
+    setIsHovered(false);
   };
 
   const handleDelete = () => {
     setShowDeleteConfirm(true);
     setShowDropdown(false);
+    setIsHovered(false);
   };
 
   const confirmDelete = () => {
@@ -75,11 +86,13 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
   const handlePin = () => {
     pinBookmark(bookmark.id);
     setShowDropdown(false);
+    setIsHovered(false);
   };
 
   const handleUnpin = () => {
     unpinBookmark(bookmark.id);
     setShowDropdown(false);
+    setIsHovered(false);
   };
 
   const getFaviconUrl = () => {
