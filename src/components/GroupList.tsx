@@ -33,7 +33,6 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deletingGroup, setDeletingGroup] = useState<Group | null>(null);
   const [dragOverGroup, setDragOverGroup] = useState<string | null>(null);
-  const [draggedBookmark, setDraggedBookmark] = useState<{id: string, title: string} | null>(null);
 
   const toggleGroup = (groupId: string) => {
     const newExpanded = new Set(expandedGroups);
@@ -127,12 +126,6 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
         
         if (!isAlreadyInGroup) {
           moveBookmarkToGroup(bookmarkId, targetGroupId);
-          setDraggedBookmark({ id: bookmarkId, title: bookmarkTitle });
-          
-          // 3秒后清除拖拽状态
-          setTimeout(() => {
-            setDraggedBookmark(null);
-          }, 3000);
         }
       }
     } catch (error) {
@@ -206,8 +199,7 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
             key={group.id} 
             className={cn(
               "border-b border-gray-100 dark:border-gray-800",
-              dragOverGroup === group.id && "bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600",
-              draggedBookmark?.id && getGroupBookmarks(group.id).some(b => b.id === draggedBookmark.id) && "bg-green-100 dark:bg-green-900/30"
+              dragOverGroup === group.id && "bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600"
             )}
             onDragOver={(e) => handleDragOver(e, group.id)}
             onDragLeave={handleDragLeave}
@@ -234,11 +226,6 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
                     {dragOverGroup === group.id && (
                       <span className="ml-2 text-sm text-blue-600 dark:text-blue-400">
                         (拖拽到此分组)
-                      </span>
-                    )}
-                    {draggedBookmark?.id && getGroupBookmarks(group.id).some(b => b.id === draggedBookmark.id) && (
-                      <span className="ml-2 text-sm text-green-600 dark:text-green-400">
-                        (已移动到此分组)
                       </span>
                     )}
                   </div>
