@@ -139,15 +139,16 @@ const AIToolSelector: React.FC = () => {
                      
                      {/* 省略号菜单按钮 */}
                      <div className={cn(
-                       "absolute right-2 top-1/2 -translate-y-1/2 z-[99998]",
-                       activeDropdown && activeDropdown !== tool.id ? "opacity-0 pointer-events-none" : ""
+                       "absolute right-2 top-1/2 -translate-y-1/2 z-[99998] transition-opacity duration-200",
+                       activeDropdown && activeDropdown !== tool.id ? "opacity-0 pointer-events-none" : "",
+                       "opacity-0 group-hover:opacity-100"
                      )}>
                        <button
                          onClick={(e) => {
                            e.stopPropagation();
                            setActiveDropdown(activeDropdown === tool.id ? null : tool.id);
                          }}
-                         className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-all opacity-60 hover:opacity-100"
+                         className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-all"
                          title="更多选项"
                        >
                          <MoreVertical className="w-4 h-4 text-gray-500 dark:text-gray-400" />
