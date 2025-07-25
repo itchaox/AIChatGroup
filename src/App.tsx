@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import { useAppStore } from './store/useAppStore';
 import AIToolSelector from './components/AIToolSelector';
 import GroupList from './components/GroupList';
-import ActionBar from './components/ActionBar';
 import GroupModal from './components/GroupModal';
 import BookmarkModal from './components/BookmarkModal';
 import { AIToolModal } from './components/AIToolModal';
@@ -42,9 +41,6 @@ function App() {
       
       {/* 分组列表 */}
       <GroupList groups={groups} />
-      
-      {/* 底部操作栏 */}
-      <ActionBar />
       
       {/* 模态框 */}
       <GroupModal />
