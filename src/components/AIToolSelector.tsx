@@ -1,6 +1,6 @@
 // AI工具选择器组件
 import React, { useState, useRef, useEffect } from 'react';
-import { Settings, ChevronDown, Plus, Cog } from 'lucide-react';
+import { MoreVertical, ChevronDown, Plus, Edit, Trash2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../lib/utils';
 
@@ -16,6 +16,7 @@ const AIToolSelector: React.FC = () => {
   } = useAppStore();
   
   const [isOpen, setIsOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const currentTool = aiTools.find(tool => tool.id === currentAITool);
@@ -45,9 +46,17 @@ const AIToolSelector: React.FC = () => {
     setIsOpen(false);
   };
 
-  const handleManageTools = () => {
-    setEditingAITool(null);
-    setShowAIToolModal(true);
+  const handleEditGroup = (toolId: string) => {
+    // TODO: 实现编辑分组功能
+    console.log('编辑分组:', toolId);
+    setActiveDropdown(null);
+    setIsOpen(false);
+  };
+
+  const handleDeleteGroup = (toolId: string) => {
+    // TODO: 实现删除分组功能
+    console.log('删除分组:', toolId);
+    setActiveDropdown(null);
     setIsOpen(false);
   };
 
@@ -56,14 +65,15 @@ const AIToolSelector: React.FC = () => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
+        setActiveDropdown(null);
       }
     };
 
-    if (isOpen) {
+    if (isOpen || activeDropdown) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
-  }, [isOpen]);
+  }, [isOpen, activeDropdown]);
 
   return (
     <>
@@ -96,16 +106,7 @@ const AIToolSelector: React.FC = () => {
 
           {/* 下拉菜单 */}
           {isOpen && (
-            <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 dark:bg-gray-800 dark:border-gray-700 max-h-[460px] overflow-y-auto">
-              {/* 管理工具按钮 */}
-              <button
-                onClick={handleManageTools}
-                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20 transition-colors"
-              >
-                <Cog className="w-4 h-4" />
-                <span>管理工具</span>
-              </button>
-              
+            <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-40 dark:bg-gray-800 dark:border-gray-700 max-h-[460px] overflow-y-auto">
               {/* 新增工具按钮 */}
               <button
                 onClick={handleAddNewTool}
@@ -136,17 +137,45 @@ const AIToolSelector: React.FC = () => {
                        <span className="flex-1">{tool.name}</span>
                      </button>
                      
-                     {/* 编辑按钮 */}
-                     <button
-                       onClick={(e) => {
-                         e.stopPropagation();
-                         handleEditTool(tool.id);
-                       }}
-                       className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-all"
-                       title="编辑工具"
-                     >
-                       <Settings className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                     </button>
+                     {/* 省略号菜单按钮 */}
+                     <div className="absolute right-2 top-1/2 -translate-y-1/2 z-[99998]">
+                       <button
+                         onClick={(e) => {
+                           e.stopPropagation();
+                           setActiveDropdown(activeDropdown === tool.id ? null : tool.id);
+                         }}
+                         className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-all opacity-60 hover:opacity-100"
+                         title="更多选项"
+                       >
+                         <MoreVertical className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                       </button>
+                       
+                       {/* 下拉菜单 */}
+                       {activeDropdown === tool.id && (
+                         <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-[99999] dark:bg-gray-800 dark:border-gray-700 min-w-[120px]">
+                           <button
+                             onClick={(e) => {
+                               e.stopPropagation();
+                               handleEditTool(tool.id);
+                             }}
+                             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
+                           >
+                             <Edit className="w-3 h-3" />
+                             <span>编辑工具</span>
+                           </button>
+                           <button
+                             onClick={(e) => {
+                               e.stopPropagation();
+                               handleDeleteGroup(tool.id);
+                             }}
+                             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 transition-colors"
+                           >
+                             <Trash2 className="w-3 h-3" />
+                             <span>删除工具</span>
+                           </button>
+                         </div>
+                       )}
+                     </div>
                    </div>
                  );
                })}
