@@ -129,12 +129,29 @@ const AIToolSelector: React.FC = () => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
         setActiveDropdown(null);
+        setDropdownPosition({});
       }
     };
 
     if (isOpen || activeDropdown) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isOpen, activeDropdown]);
+
+  // 添加键盘ESC键关闭下拉菜单
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+        setActiveDropdown(null);
+        setDropdownPosition({});
+      }
+    };
+
+    if (isOpen || activeDropdown) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
     }
   }, [isOpen, activeDropdown]);
 
@@ -214,11 +231,11 @@ const AIToolSelector: React.FC = () => {
                          <Pin className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                        </div>
                        
-                       {/* 省略号菜单按钮 - hover时显示 */}
+                       {/* 省略号菜单按钮 - hover时显示或者当前有激活的下拉菜单时显示 */}
                        <div className={cn(
                          "absolute inset-0 flex items-center justify-center transition-opacity duration-200",
                          activeDropdown && activeDropdown !== tool.id ? "opacity-0 pointer-events-none" : "",
-                         "opacity-0 group-hover:opacity-100"
+                         activeDropdown === tool.id ? "opacity-100" : "opacity-0 group-hover:opacity-100"
                        )}>
                          <button
                            onClick={(e) => handleToggleToolDropdown(tool.id, e)}
@@ -227,60 +244,60 @@ const AIToolSelector: React.FC = () => {
                          >
                            <MoreVertical className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                          </button>
-                         
-                         {/* 下拉菜单 */}
-                         {activeDropdown === tool.id && (
-                           <div className={cn(
-                             "absolute right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-[999999] dark:bg-gray-800 dark:border-gray-700 min-w-[120px]",
-                             dropdownPosition[tool.id] === 'top' ? 'bottom-full mb-1' : 'top-full'
-                           )}>
-                             {tool.isPinned ? (
-                               <button
-                                 onClick={(e) => {
-                                   e.stopPropagation();
-                                   handleUnpinTool(tool.id);
-                                 }}
-                                 className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
-                               >
-                                 <Pin className="w-3 h-3" />
-                                 <span>取消置顶</span>
-                               </button>
-                             ) : (
-                               <button
-                                 onClick={(e) => {
-                                   e.stopPropagation();
-                                   handlePinTool(tool.id);
-                                 }}
-                                 className="w-full flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20 transition-colors"
-                               >
-                                 <Pin className="w-3 h-3" />
-                                 <span>置顶</span>
-                               </button>
-                             )}
-                             <button
-                               onClick={(e) => {
-                                 e.stopPropagation();
-                                 handleEditTool(tool.id);
-                               }}
-                               className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
-                             >
-                               <Edit className="w-3 h-3" />
-                               <span>编辑工具</span>
-                             </button>
-                             <button
-                               onClick={(e) => {
-                                 e.stopPropagation();
-                                 handleDeleteGroup(tool.id);
-                               }}
-                               className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 transition-colors"
-                             >
-                               <Trash2 className="w-3 h-3" />
-                               <span>删除工具</span>
-                             </button>
-                           </div>
-                         )}
                        </div>
                      </div>
+                     
+                     {/* 下拉菜单 - 移到外部避免影响hover状态 */}
+                     {activeDropdown === tool.id && (
+                       <div className={cn(
+                         "absolute right-2 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-[999999] dark:bg-gray-800 dark:border-gray-700 min-w-[120px]",
+                         dropdownPosition[tool.id] === 'top' ? 'bottom-8' : 'top-8'
+                       )}>
+                         {tool.isPinned ? (
+                           <button
+                             onClick={(e) => {
+                               e.stopPropagation();
+                               handleUnpinTool(tool.id);
+                             }}
+                             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
+                           >
+                             <Pin className="w-3 h-3" />
+                             <span>取消置顶</span>
+                           </button>
+                         ) : (
+                           <button
+                             onClick={(e) => {
+                               e.stopPropagation();
+                               handlePinTool(tool.id);
+                             }}
+                             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20 transition-colors"
+                           >
+                             <Pin className="w-3 h-3" />
+                             <span>置顶</span>
+                           </button>
+                         )}
+                         <button
+                           onClick={(e) => {
+                             e.stopPropagation();
+                             handleEditTool(tool.id);
+                           }}
+                           className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
+                         >
+                           <Edit className="w-3 h-3" />
+                           <span>编辑工具</span>
+                         </button>
+                         <button
+                           onClick={(e) => {
+                             e.stopPropagation();
+                             handleDeleteGroup(tool.id);
+                           }}
+                           className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 transition-colors"
+                         >
+                           <Trash2 className="w-3 h-3" />
+                           <span>删除工具</span>
+                         </button>
+                       </div>
+                     )}
                    </div>
                  );
                })}
