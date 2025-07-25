@@ -97,6 +97,27 @@ const AIToolSelector: React.FC = () => {
           {/* 下拉菜单 */}
           {isOpen && (
             <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 dark:bg-gray-800 dark:border-gray-700 max-h-80 overflow-y-auto">
+              {/* 管理工具按钮 */}
+              <button
+                onClick={handleManageTools}
+                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20 transition-colors"
+              >
+                <Cog className="w-4 h-4" />
+                <span>管理工具</span>
+              </button>
+              
+              {/* 新增工具按钮 */}
+              <button
+                onClick={handleAddNewTool}
+                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                <span>添加新工具</span>
+              </button>
+              
+              {/* 分隔线 */}
+              <div className="border-t border-gray-200 dark:border-gray-600 my-1" />
+              
               {/* AI工具列表 */}
                {aiTools.map((tool) => {
                  const isActive = currentAITool === tool.id;
@@ -129,27 +150,6 @@ const AIToolSelector: React.FC = () => {
                    </div>
                  );
                })}
-              
-              {/* 分隔线 */}
-              <div className="border-t border-gray-200 dark:border-gray-600 my-1" />
-              
-              {/* 管理工具按钮 */}
-              <button
-                onClick={handleManageTools}
-                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20 transition-colors"
-              >
-                <Cog className="w-4 h-4" />
-                <span>管理工具</span>
-              </button>
-              
-              {/* 新增工具按钮 */}
-              <button
-                onClick={handleAddNewTool}
-                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                <span>添加新工具</span>
-              </button>
             </div>
           )}
         </div>
