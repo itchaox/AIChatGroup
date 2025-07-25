@@ -5,6 +5,7 @@ import { Group } from '../types';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../lib/utils';
 import BookmarkItem from './BookmarkItem';
+import { ConfirmDialog } from './ConfirmDialog';
 
 interface GroupListProps {
   groups: Group[];
@@ -26,6 +27,8 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
   
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   const [showDropdown, setShowDropdown] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deletingGroup, setDeletingGroup] = useState<Group | null>(null);
 
   const toggleGroup = (groupId: string) => {
     const newExpanded = new Set(expandedGroups);
@@ -43,11 +46,23 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
     setShowDropdown(null);
   };
 
-  const handleDeleteGroup = (groupId: string) => {
-    if (confirm('确定要删除这个分组吗？分组下的所有收藏也会被删除。')) {
-      deleteGroup(groupId);
-    }
+  const handleDeleteGroup = (group: Group) => {
+    setDeletingGroup(group);
+    setShowDeleteConfirm(true);
     setShowDropdown(null);
+  };
+
+  const confirmDeleteGroup = () => {
+    if (deletingGroup) {
+      deleteGroup(deletingGroup.id);
+      setDeletingGroup(null);
+    }
+    setShowDeleteConfirm(false);
+  };
+
+  const cancelDeleteGroup = () => {
+    setDeletingGroup(null);
+    setShowDeleteConfirm(false);
   };
 
   const handleAddBookmark = async (groupId: string) => {
@@ -243,7 +258,7 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
                       编辑分组
                     </button>
                     <button
-                      onClick={() => handleDeleteGroup(group.id)}
+                      onClick={() => handleDeleteGroup(group)}
                       className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -286,6 +301,18 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
           </div>
         );
       })}
+      
+      {/* 删除分组确认弹窗 */}
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        onClose={cancelDeleteGroup}
+        onConfirm={confirmDeleteGroup}
+        title="删除分组"
+        message={`确定要删除分组「${deletingGroup?.name}」吗？分组下的所有收藏也会被删除。`}
+        confirmText="删除"
+        cancelText="取消"
+        type="danger"
+      />
     </div>
   );
 };
