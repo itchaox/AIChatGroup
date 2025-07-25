@@ -161,7 +161,7 @@ const AIToolSelector: React.FC = () => {
                          "absolute inset-0 flex items-center justify-center transition-opacity duration-200",
                          tool.isPinned ? "group-hover:opacity-0 opacity-100" : "opacity-0"
                        )}>
-                         <Pin className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+                         <Pin className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                        </div>
                        
                        {/* 省略号菜单按钮 - hover时显示 */}
