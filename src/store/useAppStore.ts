@@ -270,7 +270,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
     set({ bookmarks });
   },
 
-  // 取消置顶收藏
+  // 取消置顶
   unpinBookmark: (bookmarkId: string) => {
     updateBookmarkStorage(bookmarkId, { 
       isPinned: false, 
