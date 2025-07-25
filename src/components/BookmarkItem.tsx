@@ -4,6 +4,7 @@ import { ExternalLink, MoreVertical, Edit, Trash2, Globe } from 'lucide-react';
 import { Bookmark } from '../types';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../lib/utils';
+import { ConfirmDialog } from './ConfirmDialog';
 
 interface BookmarkItemProps {
   bookmark: Bookmark;
@@ -18,6 +19,7 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
   
   const [showDropdown, setShowDropdown] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -56,10 +58,13 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
   };
 
   const handleDelete = () => {
-    if (confirm('确定要删除这个收藏吗？')) {
-      deleteBookmark(bookmark.id);
-    }
+    setShowDeleteConfirm(true);
     setShowDropdown(false);
+  };
+
+  const confirmDelete = () => {
+    deleteBookmark(bookmark.id);
+    setShowDeleteConfirm(false);
   };
 
   const getFaviconUrl = () => {
@@ -160,6 +165,17 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
           </div>
         </div>
       </div>
+      
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={confirmDelete}
+        title="删除收藏"
+        message={`确定要删除收藏「${bookmark.title}」吗？删除后将无法恢复。`}
+        confirmText="删除"
+        cancelText="取消"
+        type="danger"
+      />
     </div>
   );
 };
