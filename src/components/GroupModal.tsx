@@ -107,7 +107,7 @@ const GroupModal: React.FC = () => {
                   type="button"
                   onClick={() => setSelectedIcon(icon)}
                   className={cn(
-                    "w-10 h-10 rounded-lg border-2 flex items-center justify-center text-lg transition-colors",
+                    "w-8 h-8 rounded-lg border-2 flex items-center justify-center text-sm transition-colors",
                     selectedIcon === icon
                       ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
                       : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
