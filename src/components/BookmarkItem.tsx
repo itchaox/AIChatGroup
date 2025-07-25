@@ -142,10 +142,10 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
           </div>
           
           {/* 置顶图标和省略号图标在同一个位置 */}
-          <div className="relative">
+          <div className="relative w-6 h-6">
             {/* 置顶图标 - 非hover时显示 */}
             {bookmark.isPinned && (
-              <div className="p-1 flex items-center justify-center group-hover:opacity-0 transition-opacity">
+              <div className="absolute inset-0 p-1 flex items-center justify-center group-hover:opacity-0 transition-opacity">
                 <Pin className="w-4 h-4 text-gray-500 dark:text-gray-400" />
               </div>
             )}
