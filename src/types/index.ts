@@ -56,14 +56,14 @@ export const DEFAULT_AI_TOOLS: AITool[] = [
     icon: '💎'
   },
   {
-    id: 'poe',
-    name: 'Poe',
-    icon: '🎭'
+    id: 'deepseek',
+    name: 'DeepSeek',
+    icon: '🔍'
   },
   {
-    id: 'character',
-    name: 'Character.AI',
-    icon: '🎪'
+    id: 'doubao',
+    name: '豆包',
+    icon: '🫘'
   }
 ];
 

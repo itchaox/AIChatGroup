@@ -38,10 +38,10 @@ function detectAITool(): string {
     return 'Claude';
   } else if (hostname.includes('gemini.google.com')) {
     return 'Gemini';
-  } else if (hostname.includes('poe.com')) {
-    return 'Poe';
-  } else if (hostname.includes('character.ai')) {
-    return 'Character.AI';
+  } else if (hostname.includes('chat.deepseek.com')) {
+    return 'DeepSeek';
+  } else if (hostname.includes('doubao.com')) {
+    return '豆包';
   }
   
   return 'Other';
