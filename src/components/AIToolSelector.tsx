@@ -19,7 +19,9 @@ const AIToolSelector: React.FC = () => {
   
   const [isOpen, setIsOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<{ [key: string]: 'bottom' | 'top' }>({});
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const toolRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const currentTool = aiTools.find(tool => tool.id === currentAITool);
   
@@ -70,6 +72,43 @@ const AIToolSelector: React.FC = () => {
     console.log('删除分组:', toolId);
     setActiveDropdown(null);
     setIsOpen(false);
+  };
+
+  // 计算下拉菜单位置
+  const calculateDropdownPosition = (toolId: string) => {
+    const toolElement = toolRefs.current[toolId];
+    const containerElement = dropdownRef.current;
+    
+    if (!toolElement || !containerElement) return 'bottom';
+    
+    const toolRect = toolElement.getBoundingClientRect();
+    const containerRect = containerElement.getBoundingClientRect();
+    
+    // 估算菜单高度（大约120px）
+    const menuHeight = 120;
+    const spaceBelow = containerRect.bottom - toolRect.bottom;
+    const spaceAbove = toolRect.top - containerRect.top;
+    
+    // 如果下方空间不足且上方空间充足，则向上显示
+    if (spaceBelow < menuHeight && spaceAbove > menuHeight) {
+      return 'top';
+    }
+    
+    return 'bottom';
+  };
+
+  // 处理下拉菜单显示
+  const handleToggleToolDropdown = (toolId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (activeDropdown === toolId) {
+      setActiveDropdown(null);
+      setDropdownPosition({});
+    } else {
+      const position = calculateDropdownPosition(toolId);
+      setDropdownPosition({ [toolId]: position });
+      setActiveDropdown(toolId);
+    }
   };
 
   const handlePinTool = (toolId: string) => {
@@ -147,7 +186,11 @@ const AIToolSelector: React.FC = () => {
                {sortedAITools.map((tool) => {
                  const isActive = currentAITool === tool.id;
                  return (
-                   <div key={tool.id} className="group relative">
+                   <div 
+                     key={tool.id} 
+                     className="group relative"
+                     ref={(el) => { toolRefs.current[tool.id] = el; }}
+                   >
                      <button
                        onClick={() => handleSelectTool(tool.id)}
                        className={cn(
@@ -178,10 +221,7 @@ const AIToolSelector: React.FC = () => {
                          "opacity-0 group-hover:opacity-100"
                        )}>
                          <button
-                           onClick={(e) => {
-                             e.stopPropagation();
-                             setActiveDropdown(activeDropdown === tool.id ? null : tool.id);
-                           }}
+                           onClick={(e) => handleToggleToolDropdown(tool.id, e)}
                            className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-all"
                            title="更多选项"
                          >
@@ -190,7 +230,10 @@ const AIToolSelector: React.FC = () => {
                          
                          {/* 下拉菜单 */}
                          {activeDropdown === tool.id && (
-                           <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-[999999] dark:bg-gray-800 dark:border-gray-700 min-w-[120px]">
+                           <div className={cn(
+                             "absolute right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-[999999] dark:bg-gray-800 dark:border-gray-700 min-w-[120px]",
+                             dropdownPosition[tool.id] === 'top' ? 'bottom-full mb-1' : 'top-full'
+                           )}>
                              {tool.isPinned ? (
                                <button
                                  onClick={(e) => {
