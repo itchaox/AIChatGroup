@@ -21,14 +21,16 @@ const GroupModal: React.FC = () => {
   const isEditing = !!editingGroup;
 
   useEffect(() => {
-    if (editingGroup) {
-      setName(editingGroup.name);
-      setSelectedIcon(editingGroup.icon);
-    } else {
-      setName('');
-      setSelectedIcon('📁');
+    if (showGroupModal) {
+      if (editingGroup) {
+        setName(editingGroup.name);
+        setSelectedIcon(editingGroup.icon);
+      } else {
+        setName('');
+        setSelectedIcon(GROUP_ICONS[0]); // 默认选中第一个图标
+      }
     }
-  }, [editingGroup]);
+  }, [showGroupModal, editingGroup]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,7 +72,7 @@ const GroupModal: React.FC = () => {
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            {isEditing ? '编辑分组' : '创建分组'}
+            {isEditing ? '编辑分组' : '新建分组'}
           </h2>
           <button
             onClick={handleClose}
