@@ -327,8 +327,8 @@ const AIToolSelector: React.FC = () => {
         isOpen={showDeleteConfirm}
         onClose={cancelDeleteTool}
         onConfirm={confirmDeleteTool}
-        title="删除AI工具"
-        message={`确定要删除这个AI工具吗？删除后该工具下的所有分组和收藏也会被删除，此操作无法撤销。`}
+        title={`删除${aiTools.find(t => t.id === deletingToolId)?.name || 'AI工具'}`}
+        message={`确定要删除${aiTools.find(t => t.id === deletingToolId)?.name || '这个AI工具'}吗？删除后该工具下的所有分组和收藏也会被删除，此操作无法撤销。`}
         confirmText="删除"
         cancelText="取消"
         type="danger"
