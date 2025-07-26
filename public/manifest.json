@@ -4,7 +4,6 @@
   "version": "1.0.0",
   "description": "为 ChatGPT、Claude 等 AI 工具提供分组管理。",
   "permissions": [
-    "storage",
     "activeTab",
     "sidePanel",
     "tabs"
@@ -29,11 +28,5 @@
   },
   "background": {
     "service_worker": "background.js"
-  },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
-    }
-  ]
+  }
 }
