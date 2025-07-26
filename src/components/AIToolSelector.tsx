@@ -1,4 +1,13 @@
-// AI工具选择器组件
+/*
+ * @Version    : v1.00
+ * @Author     : Wang Chao
+ * @Date       : 2025-07-25 16:48
+ * @LastAuthor : Wang Chao
+ * @LastTime   : 2025-07-26 10:27
+ * @desc       :
+ */
+//;
+ AI工具选择器组件
 import React, { useState, useRef, useEffect } from 'react';
 import { MoreVertical, ChevronDown, Plus, Edit, Trash2, Pin } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
@@ -289,7 +298,7 @@ const AIToolSelector: React.FC = () => {
                              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
                            >
                              <Pin className="w-3 h-3" />
-                             <span>置顶</span>
+                             <span>置顶工具</span>
                            </button>
                          )}
                          <button

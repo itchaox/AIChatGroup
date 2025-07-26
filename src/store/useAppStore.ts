@@ -306,7 +306,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
   createAITool: (name: string, icon: string) => {
     const newAITool = createAIToolStorage(name, icon);
     const aiTools = getAITools();
-    set({ aiTools });
+    // 自动选中新创建的工具
+    saveCurrentAITool(newAITool.id);
+    set({ aiTools, currentAITool: newAITool.id, selectedGroup: null });
   },
 
   // 更新AI工具
