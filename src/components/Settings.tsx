@@ -69,7 +69,7 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
   const handleImportFile = async (file: File) => {
     setIsImporting(true);
     setImportResult(null);
-    
+
     try {
       const text = await file.text();
       const result = await importData(text, importMode);
@@ -87,145 +87,141 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    <div
+      className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'
       onClick={handleClose}
     >
-      <div 
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto"
+      <div
+        className='bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto'
         onClick={(e) => e.stopPropagation()}
       >
         {/* 头部 */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center space-x-2">
-            <SettingsIcon className="w-5 h-5 text-blue-600" />
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">设置</h2>
+        <div className='flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700'>
+          <div className='flex items-center space-x-2'>
+            <SettingsIcon className='w-5 h-5 text-blue-600' />
+            <h2 className='text-lg font-semibold text-gray-900 dark:text-white'>设置</h2>
           </div>
           <button
             onClick={handleClose}
-            className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+            className='p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors'
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className='w-5 h-5 text-gray-500' />
           </button>
         </div>
 
         {/* 内容 */}
-        <div className="p-6 space-y-6">
+        <div className='p-6 space-y-6'>
           {/* 数据导出 */}
-          <div className="space-y-3">
-            <h3 className="text-md font-medium text-gray-900 dark:text-white flex items-center space-x-2">
-              <Download className="w-4 h-4" />
+          <div className='space-y-3'>
+            <h3 className='text-md font-medium text-gray-900 dark:text-white flex items-center space-x-2'>
+              <Download className='w-4 h-4' />
               <span>数据导出</span>
             </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className='text-sm text-gray-600 dark:text-gray-400'>
               导出所有AI工具、分组和收藏数据为JSON文件，用于备份或迁移到其他设备。
             </p>
             <button
               onClick={handleExport}
-              className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              className='w-full flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors'
             >
-              <Download className="w-4 h-4" />
+              <Download className='w-4 h-4' />
               <span>导出数据</span>
             </button>
           </div>
 
           {/* 分割线 */}
-          <div className="border-t border-gray-200 dark:border-gray-700"></div>
+          <div className='border-t border-gray-200 dark:border-gray-700'></div>
 
           {/* 数据导入 */}
-          <div className="space-y-4">
-            <h3 className="text-md font-medium text-gray-900 dark:text-white flex items-center space-x-2">
-              <Upload className="w-4 h-4" />
+          <div className='space-y-4'>
+            <h3 className='text-md font-medium text-gray-900 dark:text-white flex items-center space-x-2'>
+              <Upload className='w-4 h-4' />
               <span>数据导入</span>
             </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              从JSON文件导入数据，可以选择合并或覆盖现有数据。
-            </p>
+            <p className='text-sm text-gray-600 dark:text-gray-400'>从JSON文件导入数据，可以选择合并或覆盖现有数据。</p>
 
             {/* 导入模式选择 */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">导入模式</label>
-              <div className="space-y-2">
-                <label className="flex items-center space-x-2 cursor-pointer">
+            <div className='space-y-2'>
+              <label className='text-sm font-medium text-gray-700 dark:text-gray-300'>导入模式</label>
+              <div className='space-y-2'>
+                <label className='flex items-center space-x-2 cursor-pointer'>
                   <input
-                    type="radio"
-                    name="importMode"
-                    value="merge"
+                    type='radio'
+                    name='importMode'
+                    value='merge'
                     checked={importMode === 'merge'}
                     onChange={(e) => setImportMode(e.target.value as 'merge' | 'overwrite')}
-                    className="text-blue-600"
+                    className='text-blue-600'
                   />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">合并模式（保留现有数据，添加新数据）</span>
+                  <span className='text-sm text-gray-700 dark:text-gray-300'>合并模式（保留现有数据，添加新数据）</span>
                 </label>
-                <label className="flex items-center space-x-2 cursor-pointer">
+                <label className='flex items-center space-x-2 cursor-pointer'>
                   <input
-                    type="radio"
-                    name="importMode"
-                    value="overwrite"
+                    type='radio'
+                    name='importMode'
+                    value='overwrite'
                     checked={importMode === 'overwrite'}
                     onChange={(e) => setImportMode(e.target.value as 'merge' | 'overwrite')}
-                    className="text-blue-600"
+                    className='text-blue-600'
                   />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">覆盖模式（清空现有数据，导入新数据）</span>
+                  <span className='text-sm text-gray-700 dark:text-gray-300'>覆盖模式（清空现有数据，导入新数据）</span>
                 </label>
               </div>
             </div>
 
             {/* 文件上传区域 */}
             <div
-              className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer"
+              className='border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer'
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onClick={() => fileInputRef.current?.click()}
             >
-              <FileText className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                点击选择文件或拖拽JSON文件到此处
-              </p>
-              <p className="text-xs text-gray-500 dark:text-gray-500">
-                支持 .json 格式文件
-              </p>
+              <FileText className='w-8 h-8 text-gray-400 mx-auto mb-2' />
+              <p className='text-sm text-gray-600 dark:text-gray-400 mb-1'>点击选择文件或拖拽JSON文件到此处</p>
+              <p className='text-xs text-gray-500 dark:text-gray-500'>支持 .json 格式文件</p>
             </div>
 
             <input
               ref={fileInputRef}
-              type="file"
-              accept=".json,application/json"
+              type='file'
+              accept='.json,application/json'
               onChange={handleFileSelect}
-              className="hidden"
+              className='hidden'
             />
 
             {/* 导入状态 */}
             {isImporting && (
-              <div className="flex items-center space-x-2 text-blue-600">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                <span className="text-sm">正在导入数据...</span>
+              <div className='flex items-center space-x-2 text-blue-600'>
+                <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600'></div>
+                <span className='text-sm'>正在导入数据...</span>
               </div>
             )}
 
             {/* 导入结果 */}
             {importResult && (
-              <div className={`flex items-start space-x-2 p-3 rounded-lg ${
-                importResult.success 
-                  ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400'
-                  : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
-              }`}>
+              <div
+                className={`flex items-start space-x-2 p-3 rounded-lg ${
+                  importResult.success
+                    ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+                    : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
+                }`}
+              >
                 {importResult.success ? (
-                  <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  <CheckCircle className='w-4 h-4 mt-0.5 flex-shrink-0' />
                 ) : (
-                  <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  <AlertCircle className='w-4 h-4 mt-0.5 flex-shrink-0' />
                 )}
-                <span className="text-sm">{importResult.message}</span>
+                <span className='text-sm'>{importResult.message}</span>
               </div>
             )}
           </div>
         </div>
 
         {/* 底部 */}
-        <div className="flex justify-end p-6 border-t border-gray-200 dark:border-gray-700">
+        <div className='flex justify-end p-6 border-t border-gray-200 dark:border-gray-700'>
           <button
             onClick={handleClose}
-            className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+            className='px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors'
           >
             关闭
           </button>

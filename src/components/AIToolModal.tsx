@@ -136,11 +136,11 @@ export const AIToolModal: React.FC = () => {
 
   return (
     <>
-      <div 
+      <div
         className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'
         onClick={() => setShowAIToolModal(false)}
       >
-        <div 
+        <div
           className='bg-white rounded-lg shadow-xl w-full max-w-md max-h-[80vh] overflow-hidden'
           onClick={(e) => e.stopPropagation()}
         >

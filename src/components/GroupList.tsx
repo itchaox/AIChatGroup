@@ -198,7 +198,7 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
           <div 
             key={group.id} 
             className={cn(
-              "border-b border-gray-100 dark:border-gray-800",
+              "border-b-2 border-gray-200 dark:border-gray-700",
               dragOverGroup === group.id && "bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600"
             )}
             onDragOver={(e) => handleDragOver(e, group.id)}
