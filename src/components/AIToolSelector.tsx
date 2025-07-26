@@ -181,7 +181,7 @@ const AIToolSelector: React.FC = () => {
 
   return (
     <>
-      <div className="border-b border-gray-200 dark:border-gray-700">
+      <div>
         <div className="relative" ref={dropdownRef}>
           {/* 下拉选择器触发按钮 */}
           <button
@@ -210,7 +210,7 @@ const AIToolSelector: React.FC = () => {
 
           {/* 下拉菜单 */}
           {isOpen && (
-            <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-40 dark:bg-gray-800 dark:border-gray-700 max-h-[460px] overflow-y-auto">
+            <div className="absolute top-full left-0 w-screen bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-40 dark:bg-gray-800 dark:border-gray-700 max-h-[460px] overflow-y-auto">
               {/* 新增工具按钮 */}
               <button
                 onClick={handleAddNewTool}

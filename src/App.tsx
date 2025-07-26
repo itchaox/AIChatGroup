@@ -47,8 +47,19 @@ function App() {
 
   return (
     <div className="h-screen flex flex-col bg-white dark:bg-gray-900">
-      {/* AI工具选择器 */}
-      <AIToolSelector />
+      {/* AI工具选择器和设置按钮 */}
+      <div className="flex items-center border-b border-gray-200 dark:border-gray-700">
+        <div className="flex-1">
+          <AIToolSelector />
+        </div>
+        <button
+          onClick={() => setShowSettings(true)}
+          className="p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          title="设置"
+        >
+          <SettingsIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+        </button>
+      </div>
       
       {/* 固定的搜索框和新建分组按钮 */}
       <div className="border-b border-gray-100 dark:border-gray-800">
@@ -89,18 +100,7 @@ function App() {
           </button>
         </div>
         
-        {/* 设置按钮 */}
-        <div className="border-b border-gray-100 dark:border-gray-800">
-          <button
-            onClick={() => setShowSettings(true)}
-            className="flex items-center w-full p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
-          >
-            <div className="mr-3">
-              <SettingsIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-            </div>
-            <span className="text-sm text-gray-600 dark:text-gray-400">设置</span>
-          </button>
-        </div>
+
       </div>
       
       {/* 分组列表 */}
