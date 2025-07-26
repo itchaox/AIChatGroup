@@ -74,6 +74,10 @@ interface AppStore {
   getCurrentGroups: () => Group[];
   getGroupBookmarks: (groupId: string) => Bookmark[];
   getFilteredGroups: () => Group[];
+  
+  // 导入导出功能
+  exportData: () => string;
+  importData: (jsonData: string, mode: 'merge' | 'overwrite') => Promise<{ success: boolean; message: string; }>;
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -399,5 +403,106 @@ export const useAppStore = create<AppStore>((set, get) => ({
         bookmark.title.toLowerCase().includes(query)
       );
     });
+  },
+
+  // 导出数据
+  exportData: () => {
+    const aiTools = getAITools();
+    const groups = getGroups();
+    const bookmarks = getBookmarks();
+    
+    const exportData = {
+      version: '1.0.0',
+      exportTime: new Date().toISOString(),
+      data: {
+        aiTools,
+        groups,
+        bookmarks
+      }
+    };
+    
+    return JSON.stringify(exportData, null, 2);
+  },
+
+  // 导入数据
+  importData: async (jsonData: string, mode: 'merge' | 'overwrite') => {
+    try {
+      const importData = JSON.parse(jsonData);
+      
+      // 验证数据格式
+      if (!importData.data || !importData.data.aiTools || !importData.data.groups || !importData.data.bookmarks) {
+        return { success: false, message: '数据格式不正确，请检查导入文件' };
+      }
+      
+      const { aiTools: importAITools, groups: importGroups, bookmarks: importBookmarks } = importData.data;
+      
+      if (mode === 'overwrite') {
+        // 覆盖模式：清空现有数据，导入新数据
+        localStorage.removeItem('ai_tools');
+        localStorage.removeItem('ai_tool_groups');
+        localStorage.removeItem('ai_tool_bookmarks');
+        
+        // 导入新数据
+        localStorage.setItem('ai_tools', JSON.stringify(importAITools));
+        localStorage.setItem('ai_tool_groups', JSON.stringify(importGroups));
+        localStorage.setItem('ai_tool_bookmarks', JSON.stringify(importBookmarks));
+      } else {
+        // 合并模式：保留现有数据，添加新数据
+        const existingAITools = getAITools();
+        const existingGroups = getGroups();
+        const existingBookmarks = getBookmarks();
+        
+        // 合并AI工具（避免重复）
+        const mergedAITools = [...existingAITools];
+        importAITools.forEach((tool: AITool) => {
+          if (!mergedAITools.find(t => t.id === tool.id)) {
+            mergedAITools.push(tool);
+          }
+        });
+        
+        // 合并分组（避免重复）
+        const mergedGroups = [...existingGroups];
+        importGroups.forEach((group: Group) => {
+          if (!mergedGroups.find(g => g.id === group.id)) {
+            mergedGroups.push(group);
+          }
+        });
+        
+        // 合并收藏（避免重复）
+        const mergedBookmarks = [...existingBookmarks];
+        importBookmarks.forEach((bookmark: Bookmark) => {
+          if (!mergedBookmarks.find(b => b.id === bookmark.id)) {
+            mergedBookmarks.push(bookmark);
+          }
+        });
+        
+        // 保存合并后的数据
+        localStorage.setItem('ai_tools', JSON.stringify(mergedAITools));
+        localStorage.setItem('ai_tool_groups', JSON.stringify(mergedGroups));
+        localStorage.setItem('ai_tool_bookmarks', JSON.stringify(mergedBookmarks));
+      }
+      
+      // 立即从localStorage重新读取数据并更新store状态
+      const updatedAITools = getAITools();
+      const updatedGroups = getGroups();
+      const updatedBookmarks = getBookmarks();
+      
+      // 强制更新store状态
+      set({ 
+        aiTools: updatedAITools, 
+        groups: updatedGroups, 
+        bookmarks: updatedBookmarks,
+        selectedGroup: null // 重置选中的分组
+      });
+      
+      const message = mode === 'overwrite' 
+        ? `数据导入成功！已覆盖原有数据，导入了 ${importAITools.length} 个AI工具、${importGroups.length} 个分组、${importBookmarks.length} 个收藏`
+        : `数据导入成功！已合并数据，导入了 ${importAITools.length} 个AI工具、${importGroups.length} 个分组、${importBookmarks.length} 个收藏`;
+      
+      return { success: true, message };
+    } catch (error) {
+      console.error('导入数据失败:', error);
+      return { success: false, message: '导入失败，请检查文件格式是否正确' };
+    }
   }
 }));
