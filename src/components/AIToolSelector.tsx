@@ -3,11 +3,10 @@
  * @Author     : Wang Chao
  * @Date       : 2025-07-25 16:48
  * @LastAuthor : Wang Chao
- * @LastTime   : 2025-07-26 10:27
+ * @LastTime   : 2025-07-26 10:29
  * @desc       :
  */
-//;
- AI工具选择器组件
+// AI工具选择器组件
 import React, { useState, useRef, useEffect } from 'react';
 import { MoreVertical, ChevronDown, Plus, Edit, Trash2, Pin } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';

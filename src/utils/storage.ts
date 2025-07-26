@@ -235,14 +235,28 @@ export const deleteAITool = (toolId: string): void => {
   saveGroups(updatedGroups);
   saveBookmarks(updatedBookmarks);
   
+  // 如果删除的是当前选中的工具，需要智能选择下一个工具
+  const currentTool = getCurrentAITool();
+  const isCurrentTool = currentTool === toolId;
+  
   // 删除AI工具
   const updatedAITools = aiTools.filter(tool => tool.id !== toolId);
   saveAITools(updatedAITools);
   
-  // 如果删除的是当前选中的工具，切换到第一个工具
-  const currentTool = getCurrentAITool();
-  if (currentTool === toolId && updatedAITools.length > 0) {
-    saveCurrentAITool(updatedAITools[0].id);
+  // 智能选择下一个工具
+  if (isCurrentTool && updatedAITools.length > 0) {
+    const deletedIndex = aiTools.findIndex(tool => tool.id === toolId);
+    let nextToolId: string;
+    
+    if (deletedIndex === aiTools.length - 1) {
+      // 如果删除的是最后一个工具，选择前一个工具
+      nextToolId = updatedAITools[updatedAITools.length - 1].id;
+    } else {
+      // 否则选择下一个工具（原来的下一个工具现在在相同位置）
+      nextToolId = updatedAITools[deletedIndex] ? updatedAITools[deletedIndex].id : updatedAITools[0].id;
+    }
+    
+    saveCurrentAITool(nextToolId);
   }
 };
 

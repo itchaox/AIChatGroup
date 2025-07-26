@@ -324,7 +324,8 @@ export const useAppStore = create<AppStore>((set, get) => ({
     const aiTools = getAITools();
     const groups = getGroups();
     const bookmarks = getBookmarks();
-    set({ aiTools, groups, bookmarks, selectedGroup: null });
+    const currentAITool = getCurrentAITool();
+    set({ aiTools, groups, bookmarks, currentAITool, selectedGroup: null });
   },
 
   // 置顶AI工具
