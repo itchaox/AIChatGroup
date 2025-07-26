@@ -31,7 +31,7 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `ai-tools-backup-${new Date().toISOString().split('T')[0]}.json`;
+      a.download = `AIChatGroup-${new Date().toISOString().split('T')[0].replace(/-/g, '')}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
