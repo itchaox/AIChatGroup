@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Download, Upload, Settings as SettingsIcon, X, FileText, AlertCircle, CheckCircle } from 'lucide-react';
+import { Download, Upload, Settings as SettingsIcon, X, FileText, AlertCircle, CheckCircle, ExternalLink } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 
 interface SettingsProps {
@@ -214,6 +214,27 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
                 <span className='text-sm'>{importResult.message}</span>
               </div>
             )}
+          </div>
+
+          {/* 分割线 */}
+          <div className='border-t border-gray-200 dark:border-gray-700'></div>
+
+          {/* 关于作者 */}
+          <div className='space-y-3'>
+            <h3 className='text-md font-medium text-gray-900 dark:text-white flex items-center space-x-2'>
+              <ExternalLink className='w-4 h-4' />
+              <span>关于作者</span>
+            </h3>
+            <p className='text-sm text-gray-600 dark:text-gray-400'>
+              这个插件是免费提供给大家使用的，如果觉得好用，请支持一下我，欢迎关注我的B站频道，获取插件更新和更多 AI 工具分享！
+            </p>
+            <button
+              onClick={() => window.open('https://space.bilibili.com/521041866', '_blank')}
+              className='w-full flex items-center justify-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors'
+            >
+              <ExternalLink className='w-5 h-5' />
+              <span className='text-base font-medium'>访问作者的B站主页 🎬</span>
+            </button>
           </div>
         </div>
 
