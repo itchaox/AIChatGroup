@@ -258,7 +258,7 @@ const AIToolSelector: React.FC = () => {
                        {/* 省略号菜单按钮 - hover时显示或者当前有激活的下拉菜单时显示 */}
                        <div className={cn(
                          "absolute inset-0 flex items-center justify-center transition-opacity duration-200",
-                         activeDropdown && activeDropdown !== tool.id ? "opacity-0 pointer-events-none" : "",
+                         activeDropdown && activeDropdown !== tool.id ? "opacity-0" : "",
                          activeDropdown === tool.id ? "opacity-100" : "opacity-0 group-hover:opacity-100"
                        )}>
                          <button
