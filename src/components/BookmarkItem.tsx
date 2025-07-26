@@ -128,7 +128,7 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
     <div className="relative">
       <div
         className={cn(
-          "flex items-center py-2 px-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer",
+          "flex items-center py-2 px-3 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors cursor-pointer",
           isDragging && "opacity-50 bg-blue-50 dark:bg-blue-900/20"
         )}
         draggable
