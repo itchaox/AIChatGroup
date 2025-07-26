@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "AIChatGroup - AI对话分组管理工具",
+  "name": "AIChatGroup - AI 对话分组管理工具",
   "version": "1.0.0",
   "description": "为 ChatGPT、Claude 等 AI 工具提供分组管理。",
   "permissions": [

@@ -35,6 +35,26 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
     }
   }, [showBookmarkModal]);
 
+  // 点击外部区域关闭下拉菜单
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showDropdown) {
+        const target = event.target as Element;
+        if (!target.closest('.dropdown-container')) {
+          setShowDropdown(false);
+        }
+      }
+    };
+
+    if (showDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDropdown]);
+
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     
@@ -134,7 +154,10 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
         draggable
         onClick={handleClick}
         onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onMouseLeave={() => {
+          setIsHovered(false);
+          setShowDropdown(false);
+        }}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
@@ -176,7 +199,7 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
             )}
             
             {/* 省略号图标 - hover时显示 */}
-            <div className={`absolute inset-0 transition-opacity ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
+            <div className={`absolute inset-0 transition-opacity ${isHovered ? 'opacity-100' : 'opacity-0'} dropdown-container`}>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -188,7 +211,7 @@ const BookmarkItem: React.FC<BookmarkItemProps> = ({ bookmark }) => {
               </button>
             
               {showDropdown && (
-                <div className="absolute right-0 top-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-20 min-w-[120px]">
+                <div className="absolute right-0 top-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-20 min-w-[120px] dropdown-container">
                   {bookmark.isPinned ? (
                     <button
                       onClick={(e) => {
